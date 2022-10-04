@@ -1,14 +1,19 @@
-	type Owner @entity {
-  id: ID!
-  balance: BigInt!
-}
+# type Owner @entity {
+#   id: ID!
+#   balance: BigInt!
+# }
  
-type Transfer @entity {
-  id: ID!
-  from: Owner
-  to: Owner
-  amount: BigInt!
-  timestamp: DateTime!
-  block: Int!
+# type Transfer @entity {
+#   id: ID!
+#   from: Owner
+#   to: Owner
+#   amount: BigInt!
+#   timestamp: DateTime!
+#   block: Int!
+# }
+
+type EarlyBirdSpecialScores @entity {
+  account: ID!
+  lastClickedInBlock: Int!
+  totalRewards: BigInt!
 }
- 
