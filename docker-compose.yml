@@ -23,7 +23,6 @@ services:
     command: [
        # smartnet node endpoint
        "-e", "ws://127.0.0.1:9943",
-       # "--out", "postgres://postgres:postgres@archive-db:5432/squid-archive"
        "--out", "postgres://postgres:postgres@127.0.0.1:5432/squid-archive"
     ]
     environment:
@@ -42,8 +41,6 @@ services:
        "--database-max-connections", "3", # max number of concurrent database connections
        "--contracts-support"
     ]
-    # ports:
-    #   - "8888:8000"
 
   # localhost:3000/graphql
   archive-explorer:
