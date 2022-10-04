@@ -1,6 +1,6 @@
 {
   "outDir": "src/types",
-  "specVersions": "https://aleph-zero-testnet.archive.subsquid.io/graphql",
+  "specVersions": "http://127.0.0.1:3000/graphql",
   "events": [],
   "calls": []
 }
