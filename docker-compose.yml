@@ -1,11 +1,52 @@
 version: "3"
 
 services:
-  db:
-    image: postgres:12
+  archive-db:
+    container_name: archive-db
+    image: postgres:12  # CockroachDB cluster might be a better fit for production deployment
+    network_mode: host
+    volumes:
+      - /var/lib/postgresql/data
     environment:
-      POSTGRES_DB: squid
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: squid-archive
+
+  archive-ingest:
+    container_name: archive-ingest
+    depends_on:
+      - archive-db
+    image: subsquid/substrate-ingest:firesquid
+    network_mode: host
+    command: [
+       # smartnet node endpoint
+       "-e", "ws://127.0.0.1:9943",
+       # "--out", "postgres://postgres:postgres@archive-db:5432/squid-archive"
+       "--out", "postgres://postgres:postgres@127.0.0.1:5432/squid-archive"
+    ]
+    environment:
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+
+  archive-gateway:
+    container_name: archive-gateway
+    depends_on:
+      - archive-db
+    image: subsquid/substrate-gateway:firesquid
+    environment:
+      RUST_LOG: "substrate_gateway=info,actix_server=info"
+    command: [
+       "--database-url", "postgres://postgres:postgres@db:5432/squid-archive",
+       "--database-max-connections", "3", # max number of concurrent database connections
+       "--contracts-support"
+    ]
     ports:
-      - "${DB_PORT}:5432"
+      - "8888:8000"
+
+  # squid-db:
+  #   image: postgres:12
+  #   environment:
+  #     POSTGRES_DB: squid
+  #     POSTGRES_PASSWORD: postgres
+  #   ports:
+  #     - "${DB_PORT}:5432"
       # command: ["postgres", "-c", "log_statement=all"]
