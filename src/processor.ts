@@ -1,17 +1,11 @@
-import { lookupArchive } from "@subsquid/archive-registry"
-import * as ss58 from "@subsquid/ss58"
-import {BatchContext, BatchProcessorItem, SubstrateBatchProcessor} from "@subsquid/substrate-processor"
-import {Store, TypeormDatabase} from "@subsquid/typeorm-store"
-import {In} from "typeorm"
-
+import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from "@subsquid/substrate-processor"
+import { Store, TypeormDatabase } from "@subsquid/typeorm-store"
+import { In } from "typeorm"
 import { u8aToHex } from '@polkadot/util';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
-
 import * as button from "./abi/button"
 import addresses from './addresses.json';
-
-// import {Owner, Transfer} from "./model"
-
+import { EarlyBirdSpecialScores } from "./model"
 import { toJSON } from '@subsquid/util-internal-json'
 
 const early_bird_special = account2hex(addresses.early_bird_special)
@@ -30,14 +24,14 @@ const processor = new SubstrateBatchProcessor()
 type Item = BatchProcessorItem<typeof processor>
 type Ctx = BatchContext<Store, Item>
 
-interface ButtonPress {
+interface ButtonPressEvent {
     by: string
     when: number
     score: bigint
 }
 
-function extractPressEvents(ctx: Ctx): ButtonPress[] {
-    const events: ButtonPress[] = []
+function extractPressEvents(ctx: Ctx): ButtonPressEvent[] {
+    const events: ButtonPressEvent[] = []
     for (const block of ctx.blocks) {
 
         ctx.log.debug(block, 'block')
@@ -68,7 +62,6 @@ function extractPressEvents(ctx: Ctx): ButtonPress[] {
                         break;
                     }
                 }
-
             }
         }
     }
@@ -79,8 +72,18 @@ processor.run(new TypeormDatabase(), async ctx => {
 
     const events = extractPressEvents(ctx)
 
-    events.forEach(event => {
-      ctx.log.info(event, 'event')
+    events.forEach(async event => {
+        ctx.log.info(event, 'event')
+
+        let userScore = await ctx.store.findBy(EarlyBirdSpecialScores, {
+            id: event.by
+        }).then((score) => {
+
+            ctx.log.info(score, 'found existing user score')            
+            
+            return score
+        })
+
     })
 
 })
