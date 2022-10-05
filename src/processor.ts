@@ -5,7 +5,7 @@ import {Store, TypeormDatabase} from "@subsquid/typeorm-store"
 import {In} from "typeorm"
 
 import { u8aToHex } from '@polkadot/util';
-import { decodeAddress } from '@polkadot/util-crypto';
+import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 
 import * as button from "./abi/button"
 import addresses from './addresses.json';
@@ -40,25 +40,35 @@ function extractPressEvents(ctx: Ctx): ButtonPress[] {
     const events: ButtonPress[] = []
     for (const block of ctx.blocks) {
 
-        ctx.log.info(block, 'block')
+        ctx.log.debug(block, 'block')
         for (const item of block.items)        {
             if (item.name === 'Contracts.ContractEmitted') {
+                switch(item.event.args.contract) {
+                    case early_bird_special: {
 
-                switch(item.event.args.contract) { 
-                    case early_bird_special: { 
-
-                        ctx.log.info(item, 'early_bird_special event')
+                        ctx.log.debug(item, 'early_bird_special event')
                         const event = button.decodeEvent(item.event.args.data)
-                        ctx.log.info(event, 'early_bird_special decoded event')
-                        
-                        break; 
-                    } 
+                        ctx.log.debug(event, 'early_bird_special decoded event')
 
-                    default: { 
-                        break; 
-                    } 
-                } 
-                
+                        if (event.__kind === 'ButtonPressed') {
+                            ctx.log.debug(event, 'early_bird_special button press event')
+
+                            events.push({
+                                by: encodeAddress (event.by),
+                                when: event.when,
+                                score: event.score
+                            })
+
+                        }
+
+                        break;
+                    }
+
+                    default: {
+                        break;
+                    }
+                }
+
             }
         }
     }
@@ -67,13 +77,11 @@ function extractPressEvents(ctx: Ctx): ButtonPress[] {
 
 processor.run(new TypeormDatabase(), async ctx => {
 
-    // ctx.log.info(account2hex(addresses.early_bird_special))
-
     const events = extractPressEvents(ctx)
 
-    // txs.forEach(tx => {
-    //   ctx.log.error(`tx: ${JSON.stringify(toJSON(tx))}`)
-    // })
+    events.forEach(event => {
+      ctx.log.info(event, 'event')
+    })
 
 })
 
