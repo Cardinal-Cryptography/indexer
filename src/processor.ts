@@ -14,7 +14,7 @@ import { toJSON } from '@subsquid/util-internal-json'
 const processor = new SubstrateBatchProcessor()
     .setBatchSize(500)
     .setDataSource({
-        archive: "http://127.0.0.1:8000/graphql" //lookupArchive("shibuya", { release: "FireSquid" })
+        archive: "http://127.0.0.1:8000/graphql"
     })
     .addContractsContractEmitted(addresses.early_bird_special, {
         data: {
@@ -34,15 +34,13 @@ interface ButtonPress {
 function extractPressEvents(ctx: Ctx): ButtonPress[] {
     const events: ButtonPress[] = []
     for (const block of ctx.blocks) {
-        ctx.log.error(`block: ${JSON.stringify(toJSON(block))}`)
+        ctx.log.info(`block: ${JSON.stringify(toJSON(block))}`)
     }
     return events
 }
 
 processor.run(new TypeormDatabase(), async ctx => {
 
-    ctx.log.error("@@@ RUN")
-    
     const events = extractPressEvents(ctx)
 
     // txs.forEach(tx => {
