@@ -12,8 +12,9 @@ import addresses from './addresses.json';
 import { toJSON } from '@subsquid/util-internal-json'
 
 const processor = new SubstrateBatchProcessor()
+    .setBatchSize(500)
     .setDataSource({
-        archive: lookupArchive("shibuya", { release: "FireSquid" })
+        archive: "http://127.0.0.1:8000/graphql" //lookupArchive("shibuya", { release: "FireSquid" })
     })
     .addContractsContractEmitted(addresses.early_bird_special, {
         data: {
@@ -24,53 +25,28 @@ const processor = new SubstrateBatchProcessor()
 type Item = BatchProcessorItem<typeof processor>
 type Ctx = BatchContext<Store, Item>
 
+interface ButtonPress {
+    by: string
+    when: number
+    score: bigint
+}
+
+function extractPressEvents(ctx: Ctx): ButtonPress[] {
+    const events: ButtonPress[] = []
+    for (const block of ctx.blocks) {
+        ctx.log.error(`block: ${JSON.stringify(toJSON(block))}`)
+    }
+    return events
+}
+
 processor.run(new TypeormDatabase(), async ctx => {
-    // const txs = extractTransferRecords(ctx)
+
+    ctx.log.error("@@@ RUN")
+    
+    const events = extractPressEvents(ctx)
 
     // txs.forEach(tx => {
-
     //   ctx.log.error(`tx: ${JSON.stringify(toJSON(tx))}`)
-
     // })
 
-
 })
-
-
-// interface TransferRecord {
-//     id: string
-//     from?: string
-//     to?: string
-//     amount: bigint
-//     block: number
-//     timestamp: Date
-// }
-
-
-// function extractTransferRecords(ctx: Ctx): TransferRecord[] {
-
-//     const records: TransferRecord[] = []
-
-//     for (const block of ctx.blocks) {
-//         for (const item of block.items) {
-//             if (item.name === 'Contracts.ContractEmitted' && item.event.args.contract === CONTRACT_ADDRESS) {
-
-//                 const event = erc20.decodeEvent(item.event.args.data)
-//                 if (event.__kind === 'Transfer') {
-
-//                     records.push({
-//                         id: item.event.id,
-//                         from: event.from && ss58.codec(5).encode(event.from),
-//                         to: event.to && ss58.codec(5).encode(event.to),
-//                         amount: event.value,
-//                         block: block.header.height,
-//                         timestamp: new Date(block.header.timestamp)
-//                     })
-
-//                 }
-
-//             }
-//         }
-//     }
-//     return records
-// }
