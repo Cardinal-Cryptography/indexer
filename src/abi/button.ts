@@ -1,4 +1,6 @@
-{
+import {Abi} from "@subsquid/ink-abi"
+
+export const metadata = {
   "source": {
     "hash": "0xb02c4aaca9884eb2977faa082865d6573cf5f549d43b8a3dfbd929e7a3e9ed35",
     "language": "ink! 3.3.0",
@@ -813,3 +815,172 @@
     ]
   }
 }
+
+const _abi = new Abi(metadata)
+
+export function decodeEvent(hex: string): Event {
+  return _abi.decodeEvent(hex)
+}
+
+export function decodeMessage(hex: string): Message {
+  return _abi.decodeMessage(hex)
+}
+
+export function decodeConstructor(hex: string): Constructor {
+  return _abi.decodeConstructor(hex)
+}
+
+export type Event = Event_ButtonCreated | Event_ButtonPressed | Event_GameReset
+
+export interface Event_ButtonCreated {
+  __kind: 'ButtonCreated'
+  rewardToken: AccountId
+  ticketToken: AccountId
+  start: BlockNumber
+  deadline: BlockNumber
+}
+
+export interface Event_ButtonPressed {
+  __kind: 'ButtonPressed'
+  iteration: u64
+  by: AccountId
+  when: BlockNumber
+}
+
+export interface Event_GameReset {
+  __kind: 'GameReset'
+  when: BlockNumber
+}
+
+export type Message = Message_deadline | Message_iteration | Message_is_dead | Message_last_presser | Message_access_control | Message_reward_token | Message_ticket_token | Message_code_hash | Message_press | Message_reset | Message_set_access_control | Message_terminate
+
+/**
+ *  Returns the current deadline
+ * 
+ *  Deadline is the block number at which the game will end if there are no more participants
+ */
+export interface Message_deadline {
+  __kind: 'deadline'
+}
+
+/**
+ *  Returns the current iteration number
+ */
+export interface Message_iteration {
+  __kind: 'iteration'
+}
+
+/**
+ *  Returns the buttons status
+ */
+export interface Message_is_dead {
+  __kind: 'is_dead'
+}
+
+/**
+ *  Returns the last player who pressed the button.
+ *  If button is dead, this is The Pressiah.
+ */
+export interface Message_last_presser {
+  __kind: 'last_presser'
+}
+
+/**
+ *  Returns the current access control contract address
+ */
+export interface Message_access_control {
+  __kind: 'access_control'
+}
+
+/**
+ *  Returns address of the game's reward token
+ */
+export interface Message_reward_token {
+  __kind: 'reward_token'
+}
+
+/**
+ *  Returns address of the game's ticket token
+ */
+export interface Message_ticket_token {
+  __kind: 'ticket_token'
+}
+
+/**
+ *  Returns own code hash
+ */
+export interface Message_code_hash {
+  __kind: 'code_hash'
+}
+
+/**
+ *  Presses the button
+ * 
+ *  If called on alive button, instantaneously mints reward tokens to the caller
+ */
+export interface Message_press {
+  __kind: 'press'
+}
+
+/**
+ *  Resets the game
+ * 
+ *  Erases the storage and pays award to the Pressiah
+ *  Can be called by any account on behalf of a player
+ *  Can only be called after button's deadline
+ */
+export interface Message_reset {
+  __kind: 'reset'
+}
+
+/**
+ *  Sets new access control contract address
+ * 
+ *  Should only be called by the contract owner
+ *  Implementing contract is responsible for setting up proper AccessControl
+ */
+export interface Message_set_access_control {
+  __kind: 'set_access_control'
+  newAccessControl: AccountId
+}
+
+/**
+ *  Terminates the contract
+ * 
+ *  Should only be called by the contract Owner
+ */
+export interface Message_terminate {
+  __kind: 'terminate'
+}
+
+export type Constructor = Constructor_new
+
+export interface Constructor_new {
+  __kind: 'new'
+  ticketToken: AccountId
+  rewardToken: AccountId
+  buttonLifetime: BlockNumber
+  scoring: Scoring
+}
+
+export type AccountId = Uint8Array
+
+export type BlockNumber = number
+
+export type u64 = bigint
+
+export type Scoring = Scoring_EarlyBirdSpecial | Scoring_BackToTheFuture | Scoring_ThePressiahCometh
+
+export interface Scoring_EarlyBirdSpecial {
+  __kind: 'EarlyBirdSpecial'
+}
+
+export interface Scoring_BackToTheFuture {
+  __kind: 'BackToTheFuture'
+}
+
+export interface Scoring_ThePressiahCometh {
+  __kind: 'ThePressiahCometh'
+}
+
+export type Result<T, E> = {__kind: 'Ok', value: T} | {__kind: 'Err', value: E}
