@@ -11,6 +11,8 @@
     "query-node:start": "squid-graphql-server"
   },
   "dependencies": {
+    "@polkadot/util": "^10.1.9",
+    "@polkadot/util-crypto": "^10.1.9",
     "@subsquid/archive-registry": "1.0.14",
     "@subsquid/graphql-server": "3.2.0",
     "@subsquid/ink-abi": "^0.0.0",

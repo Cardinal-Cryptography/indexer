@@ -4,6 +4,9 @@ import {BatchContext, BatchProcessorItem, SubstrateBatchProcessor} from "@subsqu
 import {Store, TypeormDatabase} from "@subsquid/typeorm-store"
 import {In} from "typeorm"
 
+import { u8aToHex } from '@polkadot/util';
+import { decodeAddress } from '@polkadot/util-crypto';
+
 import addresses from './addresses.json';
 
 // import * as erc20 from "./abi/erc20"
@@ -16,7 +19,7 @@ const processor = new SubstrateBatchProcessor()
     .setDataSource({
         archive: "http://127.0.0.1:8000/graphql"
     })
-    .addContractsContractEmitted(addresses.early_bird_special, {
+    .addContractsContractEmitted(account2hex(addresses.early_bird_special),{
         data: {
             event: {args: true}
         }
@@ -31,15 +34,22 @@ interface ButtonPress {
     score: bigint
 }
 
+// u8aToHex(decodeAddress(a2h.account.value));
+
 function extractPressEvents(ctx: Ctx): ButtonPress[] {
     const events: ButtonPress[] = []
     for (const block of ctx.blocks) {
-        ctx.log.info(`block: ${JSON.stringify(toJSON(block))}`)
+
+        ctx.log.info(block, 'block')
+        // ctx.log.info(`block: ${JSON.stringify(toJSON(block))}`)
+
     }
     return events
 }
 
 processor.run(new TypeormDatabase(), async ctx => {
+
+    ctx.log.info(account2hex(addresses.early_bird_special))
 
     const events = extractPressEvents(ctx)
 
@@ -48,3 +58,8 @@ processor.run(new TypeormDatabase(), async ctx => {
     // })
 
 })
+
+
+function account2hex(account: string) {
+    return u8aToHex(decodeAddress(account))
+}
