@@ -2,7 +2,7 @@ import {Abi} from "@subsquid/ink-abi"
 
 export const metadata = {
   "source": {
-    "hash": "0xb02c4aaca9884eb2977faa082865d6573cf5f549d43b8a3dfbd929e7a3e9ed35",
+    "hash": "0xa52b0c05d33b9ca4d5694163abf8b1925fa743cb2733048bfc43bd14caf4fbed",
     "language": "ink! 3.3.0",
     "compiler": "rustc 1.65.0-nightly"
   },
@@ -24,7 +24,7 @@ export const metadata = {
                 "displayName": [
                   "AccountId"
                 ],
-                "type": 2
+                "type": 1
               }
             },
             {
@@ -33,7 +33,7 @@ export const metadata = {
                 "displayName": [
                   "AccountId"
                 ],
-                "type": 2
+                "type": 1
               }
             },
             {
@@ -42,7 +42,7 @@ export const metadata = {
                 "displayName": [
                   "BlockNumber"
                 ],
-                "type": 1
+                "type": 0
               }
             },
             {
@@ -51,7 +51,7 @@ export const metadata = {
                 "displayName": [
                   "Scoring"
                 ],
-                "type": 6
+                "type": 5
               }
             }
           ],
@@ -73,7 +73,7 @@ export const metadata = {
                 "displayName": [
                   "AccountId"
                 ],
-                "type": 2
+                "type": 1
               }
             },
             {
@@ -84,7 +84,7 @@ export const metadata = {
                 "displayName": [
                   "AccountId"
                 ],
-                "type": 2
+                "type": 1
               }
             },
             {
@@ -95,7 +95,7 @@ export const metadata = {
                 "displayName": [
                   "BlockNumber"
                 ],
-                "type": 1
+                "type": 0
               }
             },
             {
@@ -106,7 +106,7 @@ export const metadata = {
                 "displayName": [
                   "BlockNumber"
                 ],
-                "type": 1
+                "type": 0
               }
             }
           ],
@@ -120,23 +120,12 @@ export const metadata = {
             {
               "docs": [],
               "indexed": true,
-              "label": "iteration",
-              "type": {
-                "displayName": [
-                  "u64"
-                ],
-                "type": 0
-              }
-            },
-            {
-              "docs": [],
-              "indexed": true,
               "label": "by",
               "type": {
                 "displayName": [
                   "AccountId"
                 ],
-                "type": 2
+                "type": 1
               }
             },
             {
@@ -147,7 +136,18 @@ export const metadata = {
                 "displayName": [
                   "BlockNumber"
                 ],
-                "type": 1
+                "type": 0
+              }
+            },
+            {
+              "docs": [],
+              "indexed": false,
+              "label": "score",
+              "type": {
+                "displayName": [
+                  "Balance"
+                ],
+                "type": 4
               }
             }
           ],
@@ -166,7 +166,7 @@ export const metadata = {
                 "displayName": [
                   "BlockNumber"
                 ],
-                "type": 1
+                "type": 0
               }
             }
           ],
@@ -191,25 +191,9 @@ export const metadata = {
             "displayName": [
               "BlockNumber"
             ],
-            "type": 1
-          },
-          "selector": "0x1f48bede"
-        },
-        {
-          "args": [],
-          "docs": [
-            " Returns the current iteration number"
-          ],
-          "label": "iteration",
-          "mutates": false,
-          "payable": false,
-          "returnType": {
-            "displayName": [
-              "u64"
-            ],
             "type": 0
           },
-          "selector": "0x84ad923e"
+          "selector": "0x1f48bede"
         },
         {
           "args": [],
@@ -223,7 +207,7 @@ export const metadata = {
             "displayName": [
               "bool"
             ],
-            "type": 7
+            "type": 6
           },
           "selector": "0x958a890a"
         },
@@ -240,7 +224,7 @@ export const metadata = {
             "displayName": [
               "Option"
             ],
-            "type": 8
+            "type": 7
           },
           "selector": "0x713e8f6c"
         },
@@ -256,7 +240,7 @@ export const metadata = {
             "displayName": [
               "AccountId"
             ],
-            "type": 2
+            "type": 1
           },
           "selector": "0xf8e6bc11"
         },
@@ -272,7 +256,7 @@ export const metadata = {
             "displayName": [
               "AccountId"
             ],
-            "type": 2
+            "type": 1
           },
           "selector": "0x0b067d01"
         },
@@ -288,7 +272,7 @@ export const metadata = {
             "displayName": [
               "AccountId"
             ],
-            "type": 2
+            "type": 1
           },
           "selector": "0xda49c9d7"
         },
@@ -304,7 +288,7 @@ export const metadata = {
             "displayName": [
               "ButtonResult"
             ],
-            "type": 9
+            "type": 8
           },
           "selector": "0xbd69cea7"
         },
@@ -322,7 +306,7 @@ export const metadata = {
             "displayName": [
               "ButtonResult"
             ],
-            "type": 15
+            "type": 14
           },
           "selector": "0x55d7a21d"
         },
@@ -342,7 +326,7 @@ export const metadata = {
             "displayName": [
               "ButtonResult"
             ],
-            "type": 15
+            "type": 14
           },
           "selector": "0xdbd37e6c"
         },
@@ -354,7 +338,7 @@ export const metadata = {
                 "displayName": [
                   "AccountId"
                 ],
-                "type": 2
+                "type": 1
               }
             }
           ],
@@ -371,7 +355,7 @@ export const metadata = {
             "displayName": [
               "ButtonResult"
             ],
-            "type": 15
+            "type": 14
           },
           "selector": "0x5c864ac6"
         },
@@ -389,7 +373,7 @@ export const metadata = {
             "displayName": [
               "ButtonResult"
             ],
-            "type": 15
+            "type": 14
           },
           "selector": "0x476d839f"
         }
@@ -406,7 +390,7 @@ export const metadata = {
         "id": 0,
         "type": {
           "def": {
-            "primitive": "u64"
+            "primitive": "u32"
           }
         }
       },
@@ -414,18 +398,10 @@ export const metadata = {
         "id": 1,
         "type": {
           "def": {
-            "primitive": "u32"
-          }
-        }
-      },
-      {
-        "id": 2,
-        "type": {
-          "def": {
             "composite": {
               "fields": [
                 {
-                  "type": 3,
+                  "type": 2,
                   "typeName": "[u8; 32]"
                 }
               ]
@@ -439,18 +415,18 @@ export const metadata = {
         }
       },
       {
-        "id": 3,
+        "id": 2,
         "type": {
           "def": {
             "array": {
               "len": 32,
-              "type": 4
+              "type": 3
             }
           }
         }
       },
       {
-        "id": 4,
+        "id": 3,
         "type": {
           "def": {
             "primitive": "u8"
@@ -458,7 +434,7 @@ export const metadata = {
         }
       },
       {
-        "id": 5,
+        "id": 4,
         "type": {
           "def": {
             "primitive": "u128"
@@ -466,7 +442,7 @@ export const metadata = {
         }
       },
       {
-        "id": 6,
+        "id": 5,
         "type": {
           "def": {
             "variant": {
@@ -494,7 +470,7 @@ export const metadata = {
         }
       },
       {
-        "id": 7,
+        "id": 6,
         "type": {
           "def": {
             "primitive": "bool"
@@ -502,7 +478,7 @@ export const metadata = {
         }
       },
       {
-        "id": 8,
+        "id": 7,
         "type": {
           "def": {
             "variant": {
@@ -514,7 +490,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 2
+                      "type": 1
                     }
                   ],
                   "index": 1,
@@ -526,7 +502,7 @@ export const metadata = {
           "params": [
             {
               "name": "T",
-              "type": 2
+              "type": 1
             }
           ],
           "path": [
@@ -535,7 +511,7 @@ export const metadata = {
         }
       },
       {
-        "id": 9,
+        "id": 8,
         "type": {
           "def": {
             "variant": {
@@ -543,7 +519,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 10
+                      "type": 9
                     }
                   ],
                   "index": 0,
@@ -552,7 +528,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 11
+                      "type": 10
                     }
                   ],
                   "index": 1,
@@ -564,11 +540,11 @@ export const metadata = {
           "params": [
             {
               "name": "T",
-              "type": 10
+              "type": 9
             },
             {
               "name": "E",
-              "type": 11
+              "type": 10
             }
           ],
           "path": [
@@ -577,13 +553,13 @@ export const metadata = {
         }
       },
       {
-        "id": 10,
+        "id": 9,
         "type": {
           "def": {
             "composite": {
               "fields": [
                 {
-                  "type": 3,
+                  "type": 2,
                   "typeName": "[u8; 32]"
                 }
               ]
@@ -597,7 +573,7 @@ export const metadata = {
         }
       },
       {
-        "id": 11,
+        "id": 10,
         "type": {
           "def": {
             "variant": {
@@ -613,7 +589,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 12,
+                      "type": 11,
                       "typeName": "Role"
                     }
                   ],
@@ -623,7 +599,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 13,
+                      "type": 12,
                       "typeName": "PSP22Error"
                     }
                   ],
@@ -633,7 +609,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 14,
+                      "type": 13,
                       "typeName": "String"
                     }
                   ],
@@ -655,7 +631,7 @@ export const metadata = {
         }
       },
       {
-        "id": 12,
+        "id": 11,
         "type": {
           "def": {
             "variant": {
@@ -663,7 +639,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 2,
+                      "type": 1,
                       "typeName": "AccountId"
                     }
                   ],
@@ -673,7 +649,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 2,
+                      "type": 1,
                       "typeName": "AccountId"
                     }
                   ],
@@ -683,7 +659,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 10,
+                      "type": 9,
                       "typeName": "Hash"
                     }
                   ],
@@ -701,7 +677,7 @@ export const metadata = {
         }
       },
       {
-        "id": 13,
+        "id": 12,
         "type": {
           "def": {
             "variant": {
@@ -709,7 +685,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 14,
+                      "type": 13,
                       "typeName": "String"
                     }
                   ],
@@ -735,7 +711,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 14,
+                      "type": 13,
                       "typeName": "String"
                     }
                   ],
@@ -755,7 +731,7 @@ export const metadata = {
         }
       },
       {
-        "id": 14,
+        "id": 13,
         "type": {
           "def": {
             "primitive": "str"
@@ -763,7 +739,7 @@ export const metadata = {
         }
       },
       {
-        "id": 15,
+        "id": 14,
         "type": {
           "def": {
             "variant": {
@@ -771,7 +747,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 16
+                      "type": 15
                     }
                   ],
                   "index": 0,
@@ -780,7 +756,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 11
+                      "type": 10
                     }
                   ],
                   "index": 1,
@@ -792,11 +768,11 @@ export const metadata = {
           "params": [
             {
               "name": "T",
-              "type": 16
+              "type": 15
             },
             {
               "name": "E",
-              "type": 11
+              "type": 10
             }
           ],
           "path": [
@@ -805,7 +781,7 @@ export const metadata = {
         }
       },
       {
-        "id": 16,
+        "id": 15,
         "type": {
           "def": {
             "tuple": []
@@ -842,9 +818,9 @@ export interface Event_ButtonCreated {
 
 export interface Event_ButtonPressed {
   __kind: 'ButtonPressed'
-  iteration: u64
   by: AccountId
   when: BlockNumber
+  score: Balance
 }
 
 export interface Event_GameReset {
@@ -852,7 +828,7 @@ export interface Event_GameReset {
   when: BlockNumber
 }
 
-export type Message = Message_deadline | Message_iteration | Message_is_dead | Message_last_presser | Message_access_control | Message_reward_token | Message_ticket_token | Message_code_hash | Message_press | Message_reset | Message_set_access_control | Message_terminate
+export type Message = Message_deadline | Message_is_dead | Message_last_presser | Message_access_control | Message_reward_token | Message_ticket_token | Message_code_hash | Message_press | Message_reset | Message_set_access_control | Message_terminate
 
 /**
  *  Returns the current deadline
@@ -861,13 +837,6 @@ export type Message = Message_deadline | Message_iteration | Message_is_dead | M
  */
 export interface Message_deadline {
   __kind: 'deadline'
-}
-
-/**
- *  Returns the current iteration number
- */
-export interface Message_iteration {
-  __kind: 'iteration'
 }
 
 /**
@@ -967,7 +936,7 @@ export type AccountId = Uint8Array
 
 export type BlockNumber = number
 
-export type u64 = bigint
+export type Balance = bigint
 
 export type Scoring = Scoring_EarlyBirdSpecial | Scoring_BackToTheFuture | Scoring_ThePressiahCometh
 

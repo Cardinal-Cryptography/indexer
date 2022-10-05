@@ -7,19 +7,21 @@ import {In} from "typeorm"
 import { u8aToHex } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/util-crypto';
 
+import * as button from "./abi/button"
 import addresses from './addresses.json';
 
-// import * as erc20 from "./abi/erc20"
 // import {Owner, Transfer} from "./model"
 
 import { toJSON } from '@subsquid/util-internal-json'
+
+const early_bird_special = account2hex(addresses.early_bird_special)
 
 const processor = new SubstrateBatchProcessor()
     .setBatchSize(500)
     .setDataSource({
         archive: "http://127.0.0.1:8000/graphql"
     })
-    .addContractsContractEmitted(account2hex(addresses.early_bird_special),{
+    .addContractsContractEmitted(early_bird_special,{
         data: {
             event: {args: true}
         }
@@ -34,22 +36,38 @@ interface ButtonPress {
     score: bigint
 }
 
-// u8aToHex(decodeAddress(a2h.account.value));
-
 function extractPressEvents(ctx: Ctx): ButtonPress[] {
     const events: ButtonPress[] = []
     for (const block of ctx.blocks) {
 
         ctx.log.info(block, 'block')
-        // ctx.log.info(`block: ${JSON.stringify(toJSON(block))}`)
+        for (const item of block.items)        {
+            if (item.name === 'Contracts.ContractEmitted') {
 
+                switch(item.event.args.contract) { 
+                    case early_bird_special: { 
+
+                        ctx.log.info(item, 'early_bird_special event')
+                        const event = button.decodeEvent(item.event.args.data)
+                        ctx.log.info(event, 'early_bird_special decoded event')
+                        
+                        break; 
+                    } 
+
+                    default: { 
+                        break; 
+                    } 
+                } 
+                
+            }
+        }
     }
     return events
 }
 
 processor.run(new TypeormDatabase(), async ctx => {
 
-    ctx.log.info(account2hex(addresses.early_bird_special))
+    // ctx.log.info(account2hex(addresses.early_bird_special))
 
     const events = extractPressEvents(ctx)
 
@@ -58,7 +76,6 @@ processor.run(new TypeormDatabase(), async ctx => {
     // })
 
 })
-
 
 function account2hex(account: string) {
     return u8aToHex(decodeAddress(account))
