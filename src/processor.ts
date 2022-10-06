@@ -1,14 +1,16 @@
-import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from "@subsquid/substrate-processor"
-import { Store, TypeormDatabase } from "@subsquid/typeorm-store"
-import { In } from "typeorm"
-import { u8aToHex } from '@polkadot/util';
-import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 import * as button from "./abi/button"
 import addresses from './addresses.json';
-import { EarlyBirdSpecialScores } from "./model"
+import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from "@subsquid/substrate-processor"
+import { Scores } from "./model"
+import { In } from "typeorm"
+import { Store, TypeormDatabase } from "@subsquid/typeorm-store"
+import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 import { toJSON } from '@subsquid/util-internal-json'
+import { u8aToHex } from '@polkadot/util';
 
 const early_bird_special = account2hex(addresses.early_bird_special)
+const back_to_the_future = account2hex(addresses.back_to_the_future)
+const the_pressiah_cometh = account2hex(addresses.the_pressiah_cometh)
 
 const processor = new SubstrateBatchProcessor()
     .setBatchSize(500)
@@ -25,6 +27,7 @@ type Item = BatchProcessorItem<typeof processor>
 type Ctx = BatchContext<Store, Item>
 
 interface ButtonPressEvent {
+    game: string
     by: string
     when: number
     score: bigint
@@ -36,32 +39,22 @@ function extractPressEvents(ctx: Ctx): ButtonPressEvent[] {
 
         ctx.log.debug(block, 'block')
         for (const item of block.items)        {
-            if (item.name === 'Contracts.ContractEmitted') {
-                switch(item.event.args.contract) {
-                    case early_bird_special: {
+            if (item.name === 'Contracts.ContractEmitted' &&
+                [early_bird_special, back_to_the_future, the_pressiah_cometh].includes(item.event.args.contract)) {
 
-                        ctx.log.debug(item, 'early_bird_special event')
-                        const event = button.decodeEvent(item.event.args.data)
-                        ctx.log.debug(event, 'early_bird_special decoded event')
+                const event = button.decodeEvent(item.event.args.data)
+                if (event.__kind === 'ButtonPressed') {
+                    ctx.log.info(event, 'decoded button press event')
 
-                        if (event.__kind === 'ButtonPressed') {
-                            ctx.log.debug(event, 'early_bird_special button press event')
+                    events.push({
+                        game: encodeAddress(item.event.args.contract),
+                        by: encodeAddress (event.by),
+                        when: event.when,
+                        score: event.score
+                    })
 
-                            events.push({
-                                by: encodeAddress (event.by),
-                                when: event.when,
-                                score: event.score
-                            })
-
-                        }
-
-                        break;
-                    }
-
-                    default: {
-                        break;
-                    }
                 }
+
             }
         }
     }
@@ -72,19 +65,41 @@ processor.run(new TypeormDatabase(), async ctx => {
 
     const events = extractPressEvents(ctx)
 
-    events.forEach(async event => {
-        ctx.log.info(event, 'event')
-
-        let userScore = await ctx.store.findBy(EarlyBirdSpecialScores, {
-            id: event.by
-        }).then((score) => {
-
-            ctx.log.info(score, 'found existing user score')            
-            
-            return score
-        })
-
+    const accounts = new Set<string>()
+    events.forEach(event => {
+        accounts.add (event.by)
     })
+
+    ctx.log.info(accounts, '@ accounts')
+
+    ctx.log.info(`accounts: ${JSON.stringify(toJSON(accounts))}`)
+
+    // events.forEach(async event => {
+    //     ctx.log.info(event, 'event')
+
+    //     let userScore =
+    //         await ctx.store.findBy(EarlyBirdSpecialScores, {
+    //         id: event.by
+    //     }).then((scores) => {
+
+    //         ctx.log.info(scores, 'found existing user scores')
+
+    //         // ctx.log.info(score [0].account, 'score.account')
+    //         // ctx.log.info(score [0].lastClickedInBlock, 'score.lastClickedInBlock')
+    //         // ctx.log.info(score [0].totalRewards, 'score.totalRewards')
+
+    //         // return score
+
+    //         // scores.map(score => {
+
+    //         //     ctx.log.info(score, 'found existing user score')
+    //         //     return score
+    //         // })
+
+
+    //     })
+
+    // })
 
 })
 

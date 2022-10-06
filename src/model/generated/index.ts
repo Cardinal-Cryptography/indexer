@@ -1,1 +1,1 @@
-export * from "./earlyBirdSpecialScores.model"
+export * from "./scores.model"

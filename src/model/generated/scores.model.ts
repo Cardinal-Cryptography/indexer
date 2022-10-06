@@ -2,13 +2,16 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} f
 import * as marshal from "./marshal"
 
 @Entity_()
-export class EarlyBirdSpecialScores {
-  constructor(props?: Partial<EarlyBirdSpecialScores>) {
+export class Scores {
+  constructor(props?: Partial<Scores>) {
     Object.assign(this, props)
   }
 
   @PrimaryColumn_()
   id!: string
+
+  @Column_("text", {nullable: false})
+  game!: string
 
   @Column_("text", {nullable: false})
   account!: string

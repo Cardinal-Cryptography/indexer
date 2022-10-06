@@ -1,4 +1,5 @@
-type EarlyBirdSpecialScores @entity {
+type Scores @entity {
+  game: ID!
   account: ID!
   lastClickedInBlock: Int!
   totalRewards: BigInt!
