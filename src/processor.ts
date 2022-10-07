@@ -79,7 +79,8 @@ processor.run(new TypeormDatabase(), async ctx => {
         accountIds.add (event.by)
     })
 
-    console.log('processing events for accounts', accountIds)
+    // console.log('processing events for accounts', accountIds)
+    ctx.log.info(accountIds, 'processing events for accounts')
 
     var scoresMap = await ctx.store.findBy(Scores, {
         id: In([...accountIds])
@@ -87,7 +88,7 @@ processor.run(new TypeormDatabase(), async ctx => {
         return new Map(scores.map(userScores => [userScores.id, userScores]))
     })
 
-    console.log ('found previously persisted Scores for accounts', scoresMap)
+    ctx.log.info(scoresMap, 'found previously persisted scores')
 
     events.forEach(async event => {
 
@@ -100,7 +101,7 @@ processor.run(new TypeormDatabase(), async ctx => {
             })
         }
 
-        console.log('@0 read userScores', userScores)
+        ctx.log.info(userScores, 'updating user scores')
 
         //  set game scores switching at event.game
         switch (event.game) {
@@ -117,14 +118,8 @@ processor.run(new TypeormDatabase(), async ctx => {
                 game_score.lastClickedInBlock = event.when
                 game_score.totalRewards += event.score
 
-                ctx.log.debug(game_score, 'Processed EarlyBirdSpecial game score')
-
                 userScores.earlyBirdSpecialScore = game_score
-
-                console.log('@0 event score', event.score)
-                console.log('@1 updated userScores', userScores)
-
-                // await ctx.store.save(game_score)
+                ctx.log.debug(game_score, 'updated EarlyBirdSpecial game score')
                 break;
 
             case addresses.back_to_the_future:
@@ -141,10 +136,8 @@ processor.run(new TypeormDatabase(), async ctx => {
                 game_score.lastClickedInBlock = event.when
                 game_score.totalRewards += event.score
 
-                ctx.log.debug(game_score, 'Processed BackToTheFuture game score')
-
                 userScores.backToTheFutureScore = game_score
-                // await ctx.store.save(game_score)
+                ctx.log.debug(game_score, 'updated BackToTheFuture game score')
                 break;
 
             case addresses.the_pressiah_cometh:
@@ -161,26 +154,19 @@ processor.run(new TypeormDatabase(), async ctx => {
                 game_score.lastClickedInBlock = event.when
                 game_score.totalRewards += event.score
 
-                ctx.log.debug(game_score, 'processed ThePressiahCometh game score')
-
                 userScores.thePressiahComethScore = game_score
-                // await ctx.store.save(game_score)
+                ctx.log.debug(game_score, 'updated ThePressiahCometh game score')
+
                 break;
 
             default:
                 break;
         }
 
-        // ctx.log.info(userScores, 'done processing user scores')
-
-        console.log('@2 updated userScores', userScores)
         scoresMap.set (accountId, userScores)
-
-        console.log('updated scoresMap with userScores', scoresMap)
-
     })
 
-    // TODO : persist
+    // persist
     scoresMap.forEach(async function(userScores, accountId) {
         let earlyBirdSpecialScore = userScores.earlyBirdSpecialScore
         if (earlyBirdSpecialScore != null) {
@@ -200,7 +186,7 @@ processor.run(new TypeormDatabase(), async ctx => {
 
     })
 
-    console.log('persisting Scores', scoresMap)
+    ctx.log.info(scoresMap, 'persisting updated scores')
     await ctx.store.save([...scoresMap.values()])
 })
 
