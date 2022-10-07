@@ -1,6 +1,25 @@
-type Scores @entity {
-  game: ID!
-  account: ID!
+type EarlyBirdSpecialScore @entity {
+  id: ID!
   lastClickedInBlock: Int!
-  totalRewards: BigInt!
+  totalRewards: BigInt! @index
+}
+
+type BackToTheFutureScore @entity {
+  id: ID!
+  lastClickedInBlock: Int!
+  totalRewards: BigInt! @index
+}
+
+type ThePressiahComethScore @entity {
+  id: ID!
+  lastClickedInBlock: Int!
+  totalRewards: BigInt! @index
+}
+
+type Scores @entity {
+ "Account id"  
+  id: ID!
+  earlyBirdSpecialScore: EarlyBirdSpecialScore
+  backToTheFutureScore: BackToTheFutureScore
+  thePressiahComethScore: ThePressiahComethScore
 }

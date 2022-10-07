@@ -1,5 +1,7 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
-import * as marshal from "./marshal"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
+import {EarlyBirdSpecialScore} from "./earlyBirdSpecialScore.model"
+import {BackToTheFutureScore} from "./backToTheFutureScore.model"
+import {ThePressiahComethScore} from "./thePressiahComethScore.model"
 
 @Entity_()
 export class Scores {
@@ -7,18 +9,21 @@ export class Scores {
     Object.assign(this, props)
   }
 
+  /**
+   * Account id
+   */
   @PrimaryColumn_()
   id!: string
 
-  @Column_("text", {nullable: false})
-  game!: string
+  @Index_()
+  @ManyToOne_(() => EarlyBirdSpecialScore, {nullable: true})
+  earlyBirdSpecialScore!: EarlyBirdSpecialScore | undefined | null
 
-  @Column_("text", {nullable: false})
-  account!: string
+  @Index_()
+  @ManyToOne_(() => BackToTheFutureScore, {nullable: true})
+  backToTheFutureScore!: BackToTheFutureScore | undefined | null
 
-  @Column_("int4", {nullable: false})
-  lastClickedInBlock!: number
-
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  totalRewards!: bigint
+  @Index_()
+  @ManyToOne_(() => ThePressiahComethScore, {nullable: true})
+  thePressiahComethScore!: ThePressiahComethScore | undefined | null
 }

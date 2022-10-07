@@ -1,23 +1,33 @@
 import * as button from "./abi/button"
 import addresses from './addresses.json';
 import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from "@subsquid/substrate-processor"
-import { Scores } from "./model"
+import { Scores, ThePressiahComethScore, BackToTheFutureScore, EarlyBirdSpecialScore } from "./model"
 import { In } from "typeorm"
 import { Store, TypeormDatabase } from "@subsquid/typeorm-store"
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 import { toJSON } from '@subsquid/util-internal-json'
 import { u8aToHex } from '@polkadot/util';
 
-const early_bird_special = account2hex(addresses.early_bird_special)
-const back_to_the_future = account2hex(addresses.back_to_the_future)
-const the_pressiah_cometh = account2hex(addresses.the_pressiah_cometh)
+const EARLY_BIRD_SPECIAL = account2hex(addresses.early_bird_special)
+const BACK_TO_THE_FUTURE = account2hex(addresses.back_to_the_future)
+const THE_PRESSIAH_COMETH = account2hex(addresses.the_pressiah_cometh)
 
 const processor = new SubstrateBatchProcessor()
     .setBatchSize(500)
     .setDataSource({
         archive: "http://127.0.0.1:8000/graphql"
     })
-    .addContractsContractEmitted(early_bird_special,{
+    .addContractsContractEmitted(EARLY_BIRD_SPECIAL,{
+        data: {
+            event: {args: true}
+        }
+    } as const)
+    .addContractsContractEmitted(BACK_TO_THE_FUTURE,{
+        data: {
+            event: {args: true}
+        }
+    } as const)
+    .addContractsContractEmitted(THE_PRESSIAH_COMETH,{
         data: {
             event: {args: true}
         }
@@ -36,15 +46,14 @@ interface ButtonPressEvent {
 function extractPressEvents(ctx: Ctx): ButtonPressEvent[] {
     const events: ButtonPressEvent[] = []
     for (const block of ctx.blocks) {
-
-        ctx.log.debug(block, 'block')
         for (const item of block.items)        {
-            if (item.name === 'Contracts.ContractEmitted' &&
-                [early_bird_special, back_to_the_future, the_pressiah_cometh].includes(item.event.args.contract)) {
+            if (item.name === 'Contracts.ContractEmitted'
+                && [EARLY_BIRD_SPECIAL, BACK_TO_THE_FUTURE, THE_PRESSIAH_COMETH].includes(item.event.args.contract)) {
 
                 const event = button.decodeEvent(item.event.args.data)
                 if (event.__kind === 'ButtonPressed') {
-                    ctx.log.info(event, 'decoded button press event')
+
+                    ctx.log.debug(event, 'decoded button press event')
 
                     events.push({
                         game: encodeAddress(item.event.args.contract),
@@ -65,44 +74,136 @@ processor.run(new TypeormDatabase(), async ctx => {
 
     const events = extractPressEvents(ctx)
 
-    const accounts = new Set<string>()
+    const accountIds = new Set<string>()
     events.forEach(event => {
-        accounts.add (event.by)
+        accountIds.add (event.by)
     })
 
-    ctx.log.info(accounts, '@ accounts')
+    console.log('processing events for accounts', accountIds)
 
-    ctx.log.info(`accounts: ${JSON.stringify(toJSON(accounts))}`)
+    var scoresMap = await ctx.store.findBy(Scores, {
+        id: In([...accountIds])
+    }).then(scores => {
+        return new Map(scores.map(userScores => [userScores.id, userScores]))
+    })
 
-    // events.forEach(async event => {
-    //     ctx.log.info(event, 'event')
+    console.log ('found previously persisted Scores for accounts', scoresMap)
 
-    //     let userScore =
-    //         await ctx.store.findBy(EarlyBirdSpecialScores, {
-    //         id: event.by
-    //     }).then((scores) => {
+    events.forEach(async event => {
 
-    //         ctx.log.info(scores, 'found existing user scores')
+        var accountId = event.by
 
-    //         // ctx.log.info(score [0].account, 'score.account')
-    //         // ctx.log.info(score [0].lastClickedInBlock, 'score.lastClickedInBlock')
-    //         // ctx.log.info(score [0].totalRewards, 'score.totalRewards')
+        var userScores = scoresMap.get (accountId)
+        if (userScores == null) {
+            userScores = new Scores ({
+                id: accountId
+            })
+        }
 
-    //         // return score
+        console.log('@0 read userScores', userScores)
 
-    //         // scores.map(score => {
+        //  set game scores switching at event.game
+        switch (event.game) {
+            case addresses.early_bird_special:
 
-    //         //     ctx.log.info(score, 'found existing user score')
-    //         //     return score
-    //         // })
+                var game_score = userScores.earlyBirdSpecialScore;
+                if (game_score == null) {
+                    game_score = new EarlyBirdSpecialScore ({
+                        id: accountId,
+                        lastClickedInBlock: 0,
+                        totalRewards: 0n
+                    })
+                }
+                game_score.lastClickedInBlock = event.when
+                game_score.totalRewards += event.score
 
+                ctx.log.debug(game_score, 'Processed EarlyBirdSpecial game score')
 
-    //     })
+                userScores.earlyBirdSpecialScore = game_score
 
-    // })
+                console.log('@0 event score', event.score)
+                console.log('@1 updated userScores', userScores)
 
+                // await ctx.store.save(game_score)
+                break;
+
+            case addresses.back_to_the_future:
+
+                var game_score = userScores.backToTheFutureScore;
+                if (game_score == null) {
+                    game_score = new BackToTheFutureScore ({
+                        id: accountId,
+                        lastClickedInBlock: 0,
+                        totalRewards: 0n
+                    })
+                }
+
+                game_score.lastClickedInBlock = event.when
+                game_score.totalRewards += event.score
+
+                ctx.log.debug(game_score, 'Processed BackToTheFuture game score')
+
+                userScores.backToTheFutureScore = game_score
+                // await ctx.store.save(game_score)
+                break;
+
+            case addresses.the_pressiah_cometh:
+
+                var game_score = userScores.thePressiahComethScore
+                if (game_score == null) {
+                    game_score = new ThePressiahComethScore ({
+                        id: accountId,
+                        lastClickedInBlock: 0,
+                        totalRewards: 0n
+                    })
+                }
+
+                game_score.lastClickedInBlock = event.when
+                game_score.totalRewards += event.score
+
+                ctx.log.debug(game_score, 'processed ThePressiahCometh game score')
+
+                userScores.thePressiahComethScore = game_score
+                // await ctx.store.save(game_score)
+                break;
+
+            default:
+                break;
+        }
+
+        // ctx.log.info(userScores, 'done processing user scores')
+
+        console.log('@2 updated userScores', userScores)
+        scoresMap.set (accountId, userScores)
+
+        console.log('updated scoresMap with userScores', scoresMap)
+
+    })
+
+    // TODO : persist
+    scoresMap.forEach(async function(userScores, accountId) {
+        let earlyBirdSpecialScore = userScores.earlyBirdSpecialScore
+        if (earlyBirdSpecialScore != null) {
+            console.log('persisting userScores', earlyBirdSpecialScore)
+            await ctx.store.save(earlyBirdSpecialScore)
+        }
+
+        let backToTheFutureScore = userScores.backToTheFutureScore
+        if (backToTheFutureScore != null) {
+            await ctx.store.save(backToTheFutureScore)
+        }
+
+        let thePressiahComethScore = userScores.thePressiahComethScore
+        if (thePressiahComethScore != null) {
+            await ctx.store.save(thePressiahComethScore)
+        }
+
+    })
+
+    console.log('persisting Scores', scoresMap)
+    await ctx.store.save([...scoresMap.values()])
 })
 
-function account2hex(account: string) {
+function account2hex(account: string) : string {
     return u8aToHex(decodeAddress(account))
 }
