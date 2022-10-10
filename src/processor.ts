@@ -7,15 +7,16 @@ import { Store, TypeormDatabase } from "@subsquid/typeorm-store"
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 import { toJSON } from '@subsquid/util-internal-json'
 import { u8aToHex } from '@polkadot/util';
+var util = require('util');
 
 const EARLY_BIRD_SPECIAL = account2hex(addresses.early_bird_special)
 const BACK_TO_THE_FUTURE = account2hex(addresses.back_to_the_future)
 const THE_PRESSIAH_COMETH = account2hex(addresses.the_pressiah_cometh)
 
 const processor = new SubstrateBatchProcessor()
-    .setBatchSize(500)
+    .setBatchSize(1000)
     .setDataSource({
-        archive: "http://127.0.0.1:8000/graphql"
+        archive: util.format('%s://%s:%s/graphql', process.env.GATEWAY_PROTOCOL, process.env.GATEWAY_HOST, process.env.GATEWAY_PORT)
     })
     .addContractsContractEmitted(EARLY_BIRD_SPECIAL,{
         data: {
