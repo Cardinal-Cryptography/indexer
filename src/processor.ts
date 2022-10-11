@@ -68,6 +68,7 @@ function extractPressEvents(ctx: Ctx): ButtonPressEvent[] {
             }
         }
     }
+
     return events
 }
 
@@ -80,8 +81,7 @@ processor.run(new TypeormDatabase(), async ctx => {
         accountIds.add (event.by)
     })
 
-    // console.log('processing events for accounts', accountIds)
-    ctx.log.info(accountIds, 'processing events for accounts')
+    console.log('processing events for accounts', accountIds)
 
     var scoresMap = await ctx.store.findBy(Scores, {
         id: In([...accountIds])
@@ -171,23 +171,25 @@ processor.run(new TypeormDatabase(), async ctx => {
     scoresMap.forEach(async function(userScores, accountId) {
         let earlyBirdSpecialScore = userScores.earlyBirdSpecialScore
         if (earlyBirdSpecialScore != null) {
-            console.log('persisting userScores', earlyBirdSpecialScore)
+            console.log('persisting userScores for EarlyBirdSpecial game', earlyBirdSpecialScore)
             await ctx.store.save(earlyBirdSpecialScore)
         }
 
         let backToTheFutureScore = userScores.backToTheFutureScore
         if (backToTheFutureScore != null) {
+            console.log('persisting userScores for BackToTheFuture game', backToTheFutureScore)
             await ctx.store.save(backToTheFutureScore)
         }
 
         let thePressiahComethScore = userScores.thePressiahComethScore
         if (thePressiahComethScore != null) {
+            console.log('persisting userScores for ThePressiahCometh game', thePressiahComethScore)
             await ctx.store.save(thePressiahComethScore)
         }
 
     })
 
-    ctx.log.info(scoresMap, 'persisting updated scores')
+    console.log('persisting updated scores', scoresMap)
     await ctx.store.save([...scoresMap.values()])
 })
 
