@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # TODO deploy the docker images to our ECR (I don't have creds)
+
   build_and_deploy_processor:
     runs-on: ubuntu-latest
     steps:
