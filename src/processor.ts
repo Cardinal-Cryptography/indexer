@@ -1,5 +1,5 @@
 import * as button from "./abi/button"
-import addresses from './addresses.json';
+import addresses from './addresses/index';
 import { BatchContext, BatchProcessorItem, SubstrateBatchProcessor } from "@subsquid/substrate-processor"
 import { Scores, ThePressiahComethScore, BackToTheFutureScore, EarlyBirdSpecialScore } from "./model"
 import { In } from "typeorm"
