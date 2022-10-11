@@ -2,13 +2,17 @@ version: "3"
 
 services:
 
-  squiddb:
+  squid-db:
     image: postgres:12
-    container_name: squiddb
+    container_name: squid-db
     environment:
       POSTGRES_DB: "${DB_NAME}"
       POSTGRES_PASSWORD: postgres
     ports:
-      - "${DB_PORT}:5432"
-      # - "5432:5432"
+      - "0.0.0.0:${DB_PORT}:5432" # needed by the processor running as nodejs process (w-out docker)
     command: ["postgres", "-c", "log_statement=all"]
+
+networks:
+  default:
+    external:
+      name: node-network

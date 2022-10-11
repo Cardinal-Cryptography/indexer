@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+
+  squid-processor:
+    build:
+      context: .
+      target: processor
+    container_name: squid-processor
+    environment:
+      DB_HOST: "squid-db"
+      DB_PORT: 5432 # use internal docker network port, not the mapped to host port
+      INDEXER_ENV: "${INDEXER_ENV}"
+      GATEWAY_PROTOCOL: "${GATEWAY_PROTOCOL}"
+      GATEWAY_HOST: "archive-gateway" #"${GATEWAY_HOST}"
+      GATEWAY_PORT: "${GATEWAY_PORT}"
+
+  # localhost:4355      
+  squid-api:
+    build:
+      context: .
+      target: query-node
+    container_name: squid-api
+    environment:
+      DB_HOST: "squid-db"
+      DB_PORT: 5432 # use internal docker network port, not the mapped to host port
+      GQL_PORT: "${GQL_PORT}"
+    ports:
+      - "127.0.0.1:${GQL_PORT}:${GQL_PORT}"
+      
+networks:
+  default:
+    external:
+      name: node-network
