@@ -21,6 +21,7 @@ jobs:
     steps:
       - name: GIT | Checkout
         uses: actions/checkout@v2
+      - name: DOCKER | Build processor
         run: |
           docker build . --target processor -t public.ecr.aws/p6e8q1z1/squid-processor:$(git rev-parse --short HEAD)
 
@@ -29,5 +30,6 @@ jobs:
     steps:
       - name: GIT | Checkout
         uses: actions/checkout@v2
+      - name: DOCKER | Build API
         run: |
           docker build . --target query-node -t public.ecr.aws/p6e8q1z1/squid-api:(git rev-parse --short HEAD)
