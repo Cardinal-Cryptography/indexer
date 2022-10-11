@@ -15,6 +15,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build_and_deploy:
-    name: Build and deploy the docker image to our ECR
-    
+  # TODO deploy the docker images to our ECR (I don't have creds)
+  build_and_deploy_processor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GIT | Checkout
+        uses: actions/checkout@v2
+        run: |
+          docker build . --target processor -t public.ecr.aws/p6e8q1z1/squid-processor:$(git rev-parse --short HEAD)
+
+  build_and_deploy_api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GIT | Checkout
+        uses: actions/checkout@v2
+        run: |
+          docker build . --target query-node -t public.ecr.aws/p6e8q1z1/squid-api:(git rev-parse --short HEAD)
