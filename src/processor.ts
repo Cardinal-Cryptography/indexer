@@ -76,7 +76,7 @@ processor.run(new TypeormDatabase(), async ctx => {
 
     const events = extractPressEvents(ctx)
 
-    const accountIds = new Set<string>()
+    var accountIds = new Set<string>()
     events.forEach(event => {
         accountIds.add (event.by)
     })
@@ -157,7 +157,6 @@ processor.run(new TypeormDatabase(), async ctx => {
 
                 userScores.thePressiahComethScore = game_score
                 ctx.log.debug(game_score, 'updated ThePressiahCometh game score')
-
                 break;
 
             default:
@@ -167,29 +166,33 @@ processor.run(new TypeormDatabase(), async ctx => {
         scoresMap.set (accountId, userScores)
     })
 
-    // persist
-    scoresMap.forEach(async function(userScores, accountId) {
+    var earlyBirdSpecialScores: EarlyBirdSpecialScore[] = []
+    var backToTheFutureScores: BackToTheFutureScore[] = []
+    var thePressiahComethScores: ThePressiahComethScore[] = []
+
+    scoresMap.forEach(function(userScores, accountId) {
         let earlyBirdSpecialScore = userScores.earlyBirdSpecialScore
         if (earlyBirdSpecialScore != null) {
-            console.log('persisting userScores for EarlyBirdSpecial game', earlyBirdSpecialScore)
-            await ctx.store.save(earlyBirdSpecialScore)
+            earlyBirdSpecialScores.push(earlyBirdSpecialScore)
         }
 
         let backToTheFutureScore = userScores.backToTheFutureScore
         if (backToTheFutureScore != null) {
-            console.log('persisting userScores for BackToTheFuture game', backToTheFutureScore)
-            await ctx.store.save(backToTheFutureScore)
+            backToTheFutureScores.push (backToTheFutureScore)
         }
 
         let thePressiahComethScore = userScores.thePressiahComethScore
         if (thePressiahComethScore != null) {
-            console.log('persisting userScores for ThePressiahCometh game', thePressiahComethScore)
-            await ctx.store.save(thePressiahComethScore)
+            thePressiahComethScores.push (thePressiahComethScore)
         }
 
     })
 
+    // persist
     console.log('persisting updated scores', scoresMap)
+    await ctx.store.save(earlyBirdSpecialScores)
+    await ctx.store.save(backToTheFutureScores)
+    await ctx.store.save(thePressiahComethScores)
     await ctx.store.save([...scoresMap.values()])
 })
 
