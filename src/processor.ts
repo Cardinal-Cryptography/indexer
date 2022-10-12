@@ -53,9 +53,7 @@ function extractPressEvents(ctx: Ctx): ButtonPressEvent[] {
 
                 const event = button.decodeEvent(item.event.args.data)
                 if (event.__kind === 'ButtonPressed') {
-
                     ctx.log.debug(event, 'decoded button press event')
-
                     events.push({
                         game: encodeAddress(item.event.args.contract),
                         by: encodeAddress (event.by),
@@ -89,10 +87,11 @@ processor.run(new TypeormDatabase(), async ctx => {
         return new Map(scores.map(userScores => [userScores.id, userScores]))
     })
 
-    ctx.log.info(scoresMap, 'found previously persisted scores')
+    console.log(scoresMap, 'found previously persisted scores')
 
     events.forEach(async event => {
 
+        ctx.log.info(event, 'processing an event')
         var accountId = event.by
 
         var userScores = scoresMap.get (accountId)
@@ -108,16 +107,19 @@ processor.run(new TypeormDatabase(), async ctx => {
         switch (event.game) {
             case addresses.early_bird_special:
 
-                var game_score = userScores.earlyBirdSpecialScore;
+                var game_score = userScores.earlyBirdSpecialScore
                 if (game_score == null) {
                     game_score = new EarlyBirdSpecialScore ({
                         id: accountId,
                         lastClickedInBlock: 0,
+                        pressCount: 0,
                         totalRewards: 0n
                     })
                 }
+
                 game_score.lastClickedInBlock = event.when
                 game_score.totalRewards += event.score
+                game_score.pressCount += 1
 
                 userScores.earlyBirdSpecialScore = game_score
                 ctx.log.debug(game_score, 'updated EarlyBirdSpecial game score')
@@ -125,17 +127,19 @@ processor.run(new TypeormDatabase(), async ctx => {
 
             case addresses.back_to_the_future:
 
-                var game_score = userScores.backToTheFutureScore;
+                var game_score = userScores.backToTheFutureScore
                 if (game_score == null) {
                     game_score = new BackToTheFutureScore ({
                         id: accountId,
                         lastClickedInBlock: 0,
+                        pressCount: 0,
                         totalRewards: 0n
                     })
                 }
 
                 game_score.lastClickedInBlock = event.when
                 game_score.totalRewards += event.score
+                game_score.pressCount += 1
 
                 userScores.backToTheFutureScore = game_score
                 ctx.log.debug(game_score, 'updated BackToTheFuture game score')
@@ -148,12 +152,14 @@ processor.run(new TypeormDatabase(), async ctx => {
                     game_score = new ThePressiahComethScore ({
                         id: accountId,
                         lastClickedInBlock: 0,
+                        pressCount: 0,
                         totalRewards: 0n
                     })
                 }
 
                 game_score.lastClickedInBlock = event.when
                 game_score.totalRewards += event.score
+                game_score.pressCount += 1
 
                 userScores.thePressiahComethScore = game_score
                 ctx.log.debug(game_score, 'updated ThePressiahCometh game score')

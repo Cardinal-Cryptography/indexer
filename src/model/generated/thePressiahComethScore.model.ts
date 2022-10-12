@@ -13,6 +13,9 @@ export class ThePressiahComethScore {
   @Column_("int4", {nullable: false})
   lastClickedInBlock!: number
 
+  @Column_("int4", {nullable: false})
+  pressCount!: number
+
   @Index_()
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   totalRewards!: bigint
