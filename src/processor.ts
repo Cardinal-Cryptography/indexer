@@ -79,10 +79,23 @@ processor.run(new TypeormDatabase(), async ctx => {
         accountIds.add (event.by)
     })
 
-    console.log('processing events for accounts', accountIds)
+    console.log(accountIds, 'processing events for accounts')
 
-    var scoresMap = await ctx.store.findBy(Scores, {
-        id: In([...accountIds])
+    // var scoresMap = await ctx.store.findBy(Scores, {
+    //     id: In([...accountIds])
+    // }).then(scores => {
+    //     return new Map(scores.map(userScores => [userScores.id, userScores]))
+    // })
+
+    var scoresMap = await ctx.store.find(Scores, {
+        where: {
+            id: In([...accountIds])
+        },
+        relations: {
+            earlyBirdSpecialScore: true,
+            backToTheFutureScore: true,
+            thePressiahComethScore: true
+        }
     }).then(scores => {
         return new Map(scores.map(userScores => [userScores.id, userScores]))
     })
@@ -195,7 +208,7 @@ processor.run(new TypeormDatabase(), async ctx => {
     })
 
     // persist
-    console.log('persisting updated scores', scoresMap)
+    console.log(scoresMap, 'persisting updated scores')
     await ctx.store.save(earlyBirdSpecialScores)
     await ctx.store.save(backToTheFutureScores)
     await ctx.store.save(thePressiahComethScores)
