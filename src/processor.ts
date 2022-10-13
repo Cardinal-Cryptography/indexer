@@ -81,12 +81,6 @@ processor.run(new TypeormDatabase(), async ctx => {
 
     console.log(accountIds, 'processing events for accounts')
 
-    // var scoresMap = await ctx.store.findBy(Scores, {
-    //     id: In([...accountIds])
-    // }).then(scores => {
-    //     return new Map(scores.map(userScores => [userScores.id, userScores]))
-    // })
-
     var scoresMap = await ctx.store.find(Scores, {
         where: {
             id: In([...accountIds])
