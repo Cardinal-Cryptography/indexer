@@ -1,3 +1,5 @@
+[![Build status][build-and-deploy-badge]][build-and-deploy]
+
 # WASM squid template (FireSquid edition)
 
 This is a FireSquid version of the sample [squid](https://subsquid.io) showcasing WASM log indexing for substrate chains with a `Contracts` pallete, like Astar. This template indexes a sample ERC-20 smart contract token transfers over the [Shibuya network](https://docs.astar.network/docs/quickstart/endpoints) and serves them via graphql API.
@@ -18,7 +20,7 @@ make up
 make process
 
 # 5. The command above will block the terminal
-#    being busy with fetching the chain data, 
+#    being busy with fetching the chain data,
 #    transforming and storing it in the target database.
 #
 #    To start the graphql server open the separate terminal
@@ -64,7 +66,7 @@ npx squid-typeorm-migration create
 npx squid-typeorm-migration apply
 
 # Revert the last performed migration
-npx squid-typeorm-migration revert   
+npx squid-typeorm-migration revert
 ```
 
 ### 4. Import ABI contract and generate interfaces to decode events
@@ -97,3 +99,6 @@ More details will be added later.
 ## Disclaimer
 
 This is alpha-quality software. Expect some bugs and incompatible changes in coming weeks.
+
+[build-and-deploy]: https://github.com/Cardinal-Cryptography/indexer/actions/workflows/build_and_deploy.yml
+[build-and-deploy-badge]: https://github.com/Cardinal-Cryptography/indexer/actions/workflows/build_and_deploy.yml/badge.svg

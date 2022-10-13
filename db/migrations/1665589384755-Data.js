@@ -1,12 +1,12 @@
-module.exports = class Data1665065991281 {
-  name = 'Data1665065991281'
+module.exports = class Data1665589384755 {
+  name = 'Data1665589384755'
 
   async up(db) {
-    await db.query(`CREATE TABLE "early_bird_special_score" ("id" character varying NOT NULL, "last_clicked_in_block" integer NOT NULL, "total_rewards" numeric NOT NULL, CONSTRAINT "PK_d1b292d94bc40bd6ed22467c23d" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "early_bird_special_score" ("id" character varying NOT NULL, "last_clicked_in_block" integer NOT NULL, "press_count" integer NOT NULL, "total_rewards" numeric NOT NULL, CONSTRAINT "PK_d1b292d94bc40bd6ed22467c23d" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_8e3b2048c68bc97bc348f2594d" ON "early_bird_special_score" ("total_rewards") `)
-    await db.query(`CREATE TABLE "back_to_the_future_score" ("id" character varying NOT NULL, "last_clicked_in_block" integer NOT NULL, "total_rewards" numeric NOT NULL, CONSTRAINT "PK_39d5a666f1ec8b11acd09d13df5" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "back_to_the_future_score" ("id" character varying NOT NULL, "last_clicked_in_block" integer NOT NULL, "press_count" integer NOT NULL, "total_rewards" numeric NOT NULL, CONSTRAINT "PK_39d5a666f1ec8b11acd09d13df5" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_6c8d9f3add711d446ec05ec1a4" ON "back_to_the_future_score" ("total_rewards") `)
-    await db.query(`CREATE TABLE "the_pressiah_cometh_score" ("id" character varying NOT NULL, "last_clicked_in_block" integer NOT NULL, "total_rewards" numeric NOT NULL, CONSTRAINT "PK_870b3f8cf9e3aac6e7e4f382d17" PRIMARY KEY ("id"))`)
+    await db.query(`CREATE TABLE "the_pressiah_cometh_score" ("id" character varying NOT NULL, "last_clicked_in_block" integer NOT NULL, "press_count" integer NOT NULL, "total_rewards" numeric NOT NULL, CONSTRAINT "PK_870b3f8cf9e3aac6e7e4f382d17" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_ff2467003a8e029ed56cebba27" ON "the_pressiah_cometh_score" ("total_rewards") `)
     await db.query(`CREATE TABLE "scores" ("id" character varying NOT NULL, "early_bird_special_score_id" character varying, "back_to_the_future_score_id" character varying, "the_pressiah_cometh_score_id" character varying, CONSTRAINT "PK_c36917e6f26293b91d04b8fd521" PRIMARY KEY ("id"))`)
     await db.query(`CREATE INDEX "IDX_97f8b5b38b97dfa04fc03a4ed3" ON "scores" ("early_bird_special_score_id") `)
