@@ -72,7 +72,7 @@ jobs:
         uses: docker/setup-buildx-action@master
 
       - name: DOCKER | Build and push latest docker image
-        if: ${{ !inputs || inputs.buildImages }}
+        if: ${{ github.event != 'workflow_dispatch' || inputs.buildImages }}
         id: build-image
         uses: docker/build-push-action@v2
         with:
@@ -84,7 +84,7 @@ jobs:
           target: processor
 
       - name: BENJAMIN JSON | Configure AWS credentials
-        if: ${{ !inputs || inputs.buildFEBenjaminImages }}
+        if: ${{ github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages }}
         uses: aws-actions/configure-aws-credentials@v1
         env:
           AWS_REGION: us-east-1
@@ -94,7 +94,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: BENJAMIN JSON | Copy addresses.json files from S3 bucket
-        if: ${{ !inputs || inputs.buildFEBenjaminImages }}
+        if: ${{ github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages }}
         shell: bash
         run: |
           mkdir -p ${{ env.METADATA_PATH }}
@@ -103,14 +103,14 @@ jobs:
           echo "METADATA_COMMIT_SHA=$(cat commit_sha.txt)" >> $GITHUB_ENV
 
       - name: BENJAMIN DOCKER | Create a Dockerfile to build docker image with fe-benjamin
-        if: ${{ !inputs || inputs.buildFEBenjaminImages }}
+        if: ${{ github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages }}
         shell: bash
         run: |
           echo "FROM ${{ env.PROCESSOR_REGISTRY }}:${{ steps.get_branch.outputs.sha_short }}" > Dockerfile.fe-benjamin
           echo 'COPY ${{ env.METADATA_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json' >> Dockerfile.fe-benjamin
 
       - name: BENJAMIN DOCKER | Build and push latest docker image with fe-benjamin
-        if: ${{ !inputs || inputs.buildFEBenjaminImages }}
+        if: ${{ github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages }}
         id: build-fe-image
         uses: docker/build-push-action@v2
         with:
@@ -148,7 +148,7 @@ jobs:
         uses: docker/setup-buildx-action@master
 
       - name: DOCKER | Build and push latest docker image
-        if: ${{ !inputs || inputs.buildImages }}
+        if: ${{ github.event != 'workflow_dispatch' || inputs.buildImages }}
         id: build-image
         uses: docker/build-push-action@v2
         with:
@@ -160,7 +160,7 @@ jobs:
           target: query-node
 
       - name: BENJAMIN JSON | Configure AWS credentials
-        if: ${{ !inputs || inputs.buildFEBenjaminImages }}
+        if: ${{ github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages }}
         uses: aws-actions/configure-aws-credentials@v1
         env:
           AWS_REGION: us-east-1
@@ -170,7 +170,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: BENJAMIN JSON | Copy addresses.json files from S3 bucket
-        if: ${{ !inputs || inputs.buildFEBenjaminImages }}
+        if: ${{ github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages }}
         shell: bash
         run: |
           mkdir -p ${{ env.METADATA_PATH }}
@@ -179,14 +179,14 @@ jobs:
           echo "METADATA_COMMIT_SHA=$(cat commit_sha.txt)" >> $GITHUB_ENV
 
       - name: BENJAMIN DOCKER | Create a Dockerfile to build docker image with fe-benjamin
-        if: ${{ !inputs || inputs.buildFEBenjaminImages }}
+        if: ${{ github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages }}
         shell: bash
         run: |
           echo "FROM ${{ env.API_REGISTRY }}:${{ steps.get_branch.outputs.sha_short }}" > Dockerfile.fe-benjamin
           echo 'COPY ${{ env.METADATA_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json' >> Dockerfile.fe-benjamin
 
       - name: BENJAMIN DOCKER | Build and push latest docker image with fe-benjamin
-        if: ${{ !inputs || inputs.buildFEBenjaminImages }}
+        if: ${{ github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages }}
         id: build-fe-image
         uses: docker/build-push-action@v2
         with:
