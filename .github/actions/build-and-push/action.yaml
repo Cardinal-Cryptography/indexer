@@ -76,7 +76,7 @@ runs:
       shell: bash
       env:
         METADATA_PATH: src/addresses
-        S3BUCKET_URL: s3://contracts/fe-benjamin-button/alephzero-devnet-eu-central-1-ci
+        S3BUCKET_URL: s3://alephzero-devnet-eu-central-1-ci/contracts/fe-benjamin-button
       run: |
         mkdir -p ${{ env.METADATA_PATH }}
         aws s3 cp ${{ env.S3BUCKET_URL }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
