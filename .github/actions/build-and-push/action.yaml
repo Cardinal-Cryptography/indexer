@@ -27,13 +27,6 @@ outputs:
     description: URL of the image with fe-benjamin metadata
     value: ${{ steps.outputs.outpus.fe_benjamin_image }}
 
-env:
-  METADATA_PATH: src/addresses
-  S3BUCKET_NAME: alephzero-devnet-eu-central-1-ci
-  S3BUCKET_PATH: contracts/fe-benjamin-button
-  REGISTRY: public.ecr.aws/p6e8q1z1/
-  FE_IMAGETAG_PREFIX: 'fe-benjamin-'
-
 runs:
   using: composite
   steps:
@@ -66,7 +59,7 @@ runs:
         builder: ${{ steps.buildx.outputs.name }}
         file: ./Dockerfile
         push: true
-        tags: ${{ env.REGISTRY }}${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}
+        tags: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}
         target: ${{ inputs.target }}
 
     - name: BENJAMIN JSON | Configure AWS credentials
@@ -81,6 +74,10 @@ runs:
     - name: BENJAMIN JSON | Copy addresses.json files from S3 bucket
       if: ${{ inputs.build_fe_benjamin_image == 'true' }}
       shell: bash
+      env:
+        METADATA_PATH: src/addresses
+        S3BUCKET_NAME: alephzero-devnet-eu-central-1-ci
+        S3BUCKET_PATH: contracts/fe-benjamin-button
       run: |
         mkdir -p ${{ env.METADATA_PATH }}
         aws s3 cp s3://${{ env.S3BUCKET_NAME }}/${{ env.S3BUCKET_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
@@ -90,8 +87,10 @@ runs:
     - name: BENJAMIN DOCKER | Create a Dockerfile to build docker image with fe-benjamin
       if: ${{ inputs.build_fe_benjamin_image == 'true' }}
       shell: bash
+      env:
+        METADATA_PATH: src/addresses
       run: |
-        echo "FROM ${{ env.REGISTRY }}${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}" > Dockerfile.fe-benjamin
+        echo "FROM public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}" > Dockerfile.fe-benjamin
         echo 'COPY ${{ env.METADATA_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json' >> Dockerfile.fe-benjamin
 
     - name: BENJAMIN DOCKER | Build and push latest docker image with fe-benjamin
@@ -103,11 +102,11 @@ runs:
         builder: ${{ steps.buildx.outputs.name }}
         file: ./Dockerfile.fe-benjamin
         push: true
-        tags: ${{ env.REGISTRY }}${{ inputs.registry }}:${{ env.FE_IMAGETAG_PREFIX }}${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}
+        tags: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:fe-benjamin-${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}
 
     - name: OUTPUTS | Set outputs with docker images
       id: outputs
       shell: bash
       run: |
-        echo "::set-output name=image::${{ env.REGISTRY }}${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}"
-        echo "::set-output name=fe_benjamin_image::${{ env.REGISTRY }}${{ inputs.registry }}:${{ env.FE_IMAGETAG_PREFIX }}${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}"
+        echo "::set-output name=image::public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}"
+        echo "::set-output name=fe_benjamin_image::public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:fe-benjamin-${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}"
