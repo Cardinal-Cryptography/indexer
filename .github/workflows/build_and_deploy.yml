@@ -48,7 +48,7 @@ jobs:
         with:
           registry: squid-processor
           target: processor
-          build_fe_image: ${{ (github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages) && 'true' || 'false' }}
+          build_fe_benjamin_image: ${{ (github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages) && 'true' || 'false' }}
 
   build_and_deploy_api:
     runs-on: ubuntu-20.04
@@ -62,4 +62,4 @@ jobs:
         with:
           registry: squid-api
           target: query-node
-          build_fe_image: ${{ (github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages) && 'true' || 'false' }}
+          build_fe_benjamin_image: ${{ (github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages) && 'true' || 'false' }}

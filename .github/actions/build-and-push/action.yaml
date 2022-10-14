@@ -14,10 +14,10 @@ inputs:
 outputs:
   image:
     description: Image URL
-    value: ${{ steps... }}
+    value: ${{ steps.outputs.outputs.image }}
   fe_benjamin_image:
     description: URL of the image with fe-benjamin metadata
-    value: ${{ steps... }}
+    value: ${{ steps.outputs.outpus.fe_benjamin_image }}
 
 env:
   METADATA_PATH: src/addresses
