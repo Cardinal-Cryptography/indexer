@@ -9,6 +9,36 @@ on:
       - '*.md'
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      buildImages:
+        description: 'Build and push docker images'
+        required: false
+        type: boolean
+        default: true
+      deployImages:
+        description: 'Deploy images'
+        required: false
+        type: boolean
+        default: true
+      buildFEBenjaminImages:
+        description: 'Build docker images with metadata for fe-benjamin'
+        required: false
+        type: boolean
+        default: true
+      deployFEBenjaminImages:
+        description: 'Deploy docker images with metadata for fe-benjamin instead of original ones'
+        required: false
+        type: boolean
+        default: true
+
+env:
+  METADATA_PATH: src/addresses
+  S3BUCKET_NAME: alephzero-devnet-eu-central-1-ci
+  S3BUCKET_PATH: contracts/fe-benjamin-button
+  PROCESSOR_REGISTRY: public.ecr.aws/p6e8q1z1/squid-processor
+  API_REGISTRY: public.ecr.aws/p6e8q1z1/squid-api
+  FE_IMAGETAG_PREFIX: 'fe-benjamin-'
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
@@ -16,7 +46,7 @@ concurrency:
 
 jobs:
   build_and_deploy_processor:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
         uses: actions/checkout@v2
@@ -42,21 +72,57 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@master
 
-      - name: Build and push latest docker image
+      - name: DOCKER | Build and push latest docker image
+        if: ${{ inputs.buildImages }}
         id: build-image
-        env:
-          RELEASE_IMAGE: public.ecr.aws/p6e8q1z1/squid-processor:${{ steps.get_branch.outputs.sha_short }}
         uses: docker/build-push-action@v2
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ./Dockerfile
           push: false
-          tags: ${{ env.RELEASE_IMAGE }}
+          tags: ${{ env.PROCESSOR_REGISTRY }}:${{ steps.get_branch.outputs.sha_short }}
           target: processor
 
+      - name: BENJAMIN JSON | Configure AWS credentials
+        if: ${{ inputs.buildFEBenjaminImages }}
+        uses: aws-actions/configure-aws-credentials@v1
+        env:
+          AWS_REGION: us-east-1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: BENJAMIN JSON | Copy addresses.json files from S3 bucket
+        if: ${{ inputs.buildFEBenjaminImages }}
+        shell: bash
+        run: |
+          mkdir -p ${{ env.METADATA_PATH }}
+          aws s3 cp s3://${{ env.S3BUCKET_NAME }}/${{ env.S3BUCKET_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
+          aws s3 cp s3://${{ env.S3BUCKET_NAME }}/${{ env.S3BUCKET_PATH }}/commit_sha.txt commit_sha.txt
+          echo "METADATA_COMMIT_SHA=$(cat commit_sha.txt)" >> $GITHUB_ENV
+
+      - name: BENJAMIN DOCKER | Create a Dockerfile to build docker image with fe-benjamin
+        if: ${{ inputs.buildFEBenjaminImages }}
+        shell: bash
+        run: |
+          echo "FROM ${{ env.PROCESSOR_REGISTRY }}:${{ steps.get_branch.outputs.sha_short }}" > Dockerfile.fe-benjamin
+          echo 'COPY ${{ env.METADATA_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json' >> Dockerfile.fe-benjamin
+
+      - name: BENJAMIN DOCKER | Build and push latest docker image with fe-benjamin
+        if: ${{ inputs.buildFEBenjaminImages }}
+        id: build-fe-image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ./Dockerfile.fe-benjamin
+          push: false
+          tags: ${{ env.PROCESSOR_REGISTRY }}:${{ env.FE_IMAGETAG_PREFIX }}${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}
+
   build_and_deploy_api:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
         uses: actions/checkout@v2
@@ -82,15 +148,51 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@master
 
-      - name: Build and push latest docker image
+      - name: DOCKER | Build and push latest docker image
+        if: ${{ inputs.buildImages }}
         id: build-image
-        env:
-          RELEASE_IMAGE: public.ecr.aws/p6e8q1z1/squid-api:${{ steps.get_branch.outputs.sha_short }}
         uses: docker/build-push-action@v2
         with:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ./Dockerfile
           push: false
-          tags: ${{ env.RELEASE_IMAGE }}
+          tags: ${{ env.API_REGISTRY }}:${{ steps.get_branch.outputs.sha_short }}
           target: query-node
+
+      - name: BENJAMIN JSON | Configure AWS credentials
+        if: ${{ inputs.buildFEBenjaminImages }}
+        uses: aws-actions/configure-aws-credentials@v1
+        env:
+          AWS_REGION: us-east-1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: BENJAMIN JSON | Copy addresses.json files from S3 bucket
+        if: ${{ inputs.buildFEBenjaminImages }}
+        shell: bash
+        run: |
+          mkdir -p ${{ env.METADATA_PATH }}
+          aws s3 cp s3://${{ env.S3BUCKET_NAME }}/${{ env.S3BUCKET_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
+          aws s3 cp s3://${{ env.S3BUCKET_NAME }}/${{ env.S3BUCKET_PATH }}/commit_sha.txt commit_sha.txt
+          echo "METADATA_COMMIT_SHA=$(cat commit_sha.txt)" >> $GITHUB_ENV
+
+      - name: BENJAMIN DOCKER | Create a Dockerfile to build docker image with fe-benjamin
+        if: ${{ inputs.buildFEBenjaminImages }}
+        shell: bash
+        run: |
+          echo "FROM ${{ env.API_REGISTRY }}:${{ steps.get_branch.outputs.sha_short }}" > Dockerfile.fe-benjamin
+          echo 'COPY ${{ env.METADATA_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json' >> Dockerfile.fe-benjamin
+
+      - name: BENJAMIN DOCKER | Build and push latest docker image with fe-benjamin
+        if: ${{ inputs.buildFEBenjaminImages }}
+        id: build-fe-image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          file: ./Dockerfile.fe-benjamin
+          push: false
+          tags: ${{ env.API_REGISTRY }}:${{ env.FE_IMAGETAG_PREFIX }}${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}
