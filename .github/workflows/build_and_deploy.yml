@@ -49,6 +49,10 @@ jobs:
           registry: squid-processor
           target: processor
           build_fe_benjamin_image: ${{ (github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages) && 'true' || 'false' }}
+          aws_mainnet_access_key_id: ${{ secrets.AWS_MAINNET_ACCESS_KEY_ID }}
+          aws_mainnet_secret_access_key: ${{ secrets.AWS_MAINNET_SECRET_ACCESS_KEY }}
+          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
+          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
 
   build_and_deploy_api:
     runs-on: ubuntu-20.04
@@ -63,3 +67,7 @@ jobs:
           registry: squid-api
           target: query-node
           build_fe_benjamin_image: ${{ (github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages) && 'true' || 'false' }}
+          aws_mainnet_access_key_id: ${{ secrets.AWS_MAINNET_ACCESS_KEY_ID }}
+          aws_mainnet_secret_access_key: ${{ secrets.AWS_MAINNET_SECRET_ACCESS_KEY }}
+          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
+          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
