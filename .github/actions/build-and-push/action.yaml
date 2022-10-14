@@ -1,0 +1,105 @@
+name: Build and push docker image
+
+inputs:
+  registry:
+    description: Registry name, either squid-processor or squid-api
+    required: true
+  target:
+    description: --target argument for docker build command
+    required: true
+  build_fe_benjamin_image:
+    description: If 'true', an additional image with metadata from fe-benjamin will be built
+    required: true
+
+outputs:
+  image:
+    description: Image URL
+    value: ${{ steps... }}
+  fe_benjamin_image:
+    description: URL of the image with fe-benjamin metadata
+    value: ${{ steps... }}
+
+env:
+  METADATA_PATH: src/addresses
+  S3BUCKET_NAME: alephzero-devnet-eu-central-1-ci
+  S3BUCKET_PATH: contracts/fe-benjamin-button
+  REGISTRY: public.ecr.aws/p6e8q1z1/
+  FE_IMAGETAG_PREFIX: 'fe-benjamin-'
+
+runs:
+  using: composite
+  steps:
+    - name: GIT | Get branch info & current commit sha.
+      id: get_branch
+      shell: bash
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+    - name: DOCKER | Login to Public Amazon ECR
+      id: login-public-ecr
+      uses: docker/login-action@v1
+      with:
+        registry: public.ecr.aws
+        username: ${{ secrets.AWS_MAINNET_ACCESS_KEY_ID }}
+        password: ${{ secrets.AWS_MAINNET_SECRET_ACCESS_KEY }}
+      env:
+        AWS_REGION: us-east-1
+
+    - name: DOCKER | Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@master
+
+    - name: DOCKER | Build and push latest docker image
+      id: build-image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        builder: ${{ steps.buildx.outputs.name }}
+        file: ./Dockerfile
+        push: true
+        tags: ${{ env.REGISTRY }}${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}
+        target: ${{ inputs.target }}
+
+    - name: BENJAMIN JSON | Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      env:
+        AWS_REGION: us-east-1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: BENJAMIN JSON | Copy addresses.json files from S3 bucket
+      if: ${{ inputs.build_fe_benjamin_image == 'true' }}
+      shell: bash
+      run: |
+        mkdir -p ${{ env.METADATA_PATH }}
+        aws s3 cp s3://${{ env.S3BUCKET_NAME }}/${{ env.S3BUCKET_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
+        aws s3 cp s3://${{ env.S3BUCKET_NAME }}/${{ env.S3BUCKET_PATH }}/commit_sha.txt commit_sha.txt
+        echo "METADATA_COMMIT_SHA=$(cat commit_sha.txt)" >> $GITHUB_ENV
+
+    - name: BENJAMIN DOCKER | Create a Dockerfile to build docker image with fe-benjamin
+      if: ${{ inputs.build_fe_benjamin_image == 'true' }}
+      shell: bash
+      run: |
+        echo "FROM ${{ env.REGISTRY }}${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}" > Dockerfile.fe-benjamin
+        echo 'COPY ${{ env.METADATA_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json' >> Dockerfile.fe-benjamin
+
+    - name: BENJAMIN DOCKER | Build and push latest docker image with fe-benjamin
+      if: ${{ inputs.build_fe_benjamin_image == 'true' }}
+      id: build-fe-image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        builder: ${{ steps.buildx.outputs.name }}
+        file: ./Dockerfile.fe-benjamin
+        push: true
+        tags: ${{ env.REGISTRY }}${{ inputs.registry }}:${{ env.FE_IMAGETAG_PREFIX }}${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}
+
+    - name: OUTPUTS | Set outputs with docker images
+      id: outputs
+      shell: bash
+      run: |
+        echo "::set-output name=image::${{ env.REGISTRY }}${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}"
+        echo "::set-output name=fe_benjamin_image::${{ env.REGISTRY }}${{ inputs.registry }}:${{ env.FE_IMAGETAG_PREFIX }}${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}"
