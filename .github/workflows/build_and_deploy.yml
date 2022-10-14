@@ -79,7 +79,7 @@ jobs:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ./Dockerfile
-          push: false
+          push: true
           tags: ${{ env.PROCESSOR_REGISTRY }}:${{ steps.get_branch.outputs.sha_short }}
           target: processor
 
@@ -117,7 +117,7 @@ jobs:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ./Dockerfile.fe-benjamin
-          push: false
+          push: true
           tags: ${{ env.PROCESSOR_REGISTRY }}:${{ env.FE_IMAGETAG_PREFIX }}${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}
 
   build_and_deploy_api:
@@ -155,7 +155,7 @@ jobs:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ./Dockerfile
-          push: false
+          push: true
           tags: ${{ env.API_REGISTRY }}:${{ steps.get_branch.outputs.sha_short }}
           target: query-node
 
@@ -193,5 +193,5 @@ jobs:
           context: .
           builder: ${{ steps.buildx.outputs.name }}
           file: ./Dockerfile.fe-benjamin
-          push: false
+          push: true
           tags: ${{ env.API_REGISTRY }}:${{ env.FE_IMAGETAG_PREFIX }}${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}
