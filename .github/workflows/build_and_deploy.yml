@@ -36,13 +36,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build_and_deploy_processor:
+  build_and_push_processor:
+    name: Build and push Processor
     runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
         uses: actions/checkout@v2
 
-      - name: Build and push squid-processor image
+      - name: DOCKER | Build and push squid-processor image
         if: ${{ github.event != 'workflow_dispatch' || inputs.buildImages }}
         uses: ./.github/actions/build-and-push
         with:
@@ -54,13 +55,14 @@ jobs:
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
 
-  build_and_deploy_api:
+  build_and_push_api:
+    name: Build and push API
     runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
         uses: actions/checkout@v2
 
-      - name: Build and push squid-api image
+      - name: DOCKER | Build and push squid-api image
         if: ${{ github.event != 'workflow_dispatch' || inputs.buildImages }}
         uses: ./.github/actions/build-and-push
         with:

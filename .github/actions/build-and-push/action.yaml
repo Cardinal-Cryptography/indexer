@@ -76,12 +76,11 @@ runs:
       shell: bash
       env:
         METADATA_PATH: src/addresses
-        S3BUCKET_NAME: alephzero-devnet-eu-central-1-ci
-        S3BUCKET_PATH: contracts/fe-benjamin-button
+        S3BUCKET_URL: s3://contracts/fe-benjamin-button/alephzero-devnet-eu-central-1-ci
       run: |
         mkdir -p ${{ env.METADATA_PATH }}
-        aws s3 cp s3://${{ env.S3BUCKET_NAME }}/${{ env.S3BUCKET_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
-        aws s3 cp s3://${{ env.S3BUCKET_NAME }}/${{ env.S3BUCKET_PATH }}/commit_sha.txt commit_sha.txt
+        aws s3 cp ${{ env.S3BUCKET_URL }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
+        aws s3 cp ${{ env.S3BUCKET_URL }}/commit_sha.txt commit_sha.txt
         echo "METADATA_COMMIT_SHA=$(cat commit_sha.txt)" >> $GITHUB_ENV
 
     - name: BENJAMIN DOCKER | Create a Dockerfile to build docker image with fe-benjamin
