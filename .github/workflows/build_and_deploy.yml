@@ -1,12 +1,6 @@
 name: Build and deploy
 
 on:
-  push:
-    paths-ignore:
-      - '*.md'
-    branches:
-      - main
-      - A0-1459-modify-workflow-to-push-the-image
   workflow_dispatch:
     inputs:
       buildImages:
@@ -29,6 +23,13 @@ on:
         required: false
         type: boolean
         default: true
+
+  push:
+    paths-ignore:
+      - '*.md'
+    branches:
+      - main
+      - A0-1459-modify-workflow-to-push-the-image
 
 env:
   METADATA_PATH: src/addresses
