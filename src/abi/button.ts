@@ -2,8 +2,8 @@ import {Abi} from "@subsquid/ink-abi"
 
 export const metadata = {
   "source": {
-    "hash": "0xa52b0c05d33b9ca4d5694163abf8b1925fa743cb2733048bfc43bd14caf4fbed",
-    "language": "ink! 3.3.0",
+    "hash": "0x7a8ddbee2097ff69281ae630bfebfa868c29ebf01d34fbe625cec720e95060d6",
+    "language": "ink! 3.3.1",
     "compiler": "rustc 1.65.0-nightly"
   },
   "contract": {
@@ -37,6 +37,15 @@ export const metadata = {
               }
             },
             {
+              "label": "marketplace",
+              "type": {
+                "displayName": [
+                  "AccountId"
+                ],
+                "type": 1
+              }
+            },
+            {
               "label": "button_lifetime",
               "type": {
                 "displayName": [
@@ -51,7 +60,7 @@ export const metadata = {
                 "displayName": [
                   "Scoring"
                 ],
-                "type": 5
+                "type": 6
               }
             }
           ],
@@ -198,6 +207,22 @@ export const metadata = {
         {
           "args": [],
           "docs": [
+            " Returns the curent round number"
+          ],
+          "label": "round",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "u64"
+            ],
+            "type": 5
+          },
+          "selector": "0x11d6557e"
+        },
+        {
+          "args": [],
+          "docs": [
             " Returns the buttons status"
           ],
           "label": "is_dead",
@@ -207,7 +232,7 @@ export const metadata = {
             "displayName": [
               "bool"
             ],
-            "type": 6
+            "type": 7
           },
           "selector": "0x958a890a"
         },
@@ -224,7 +249,7 @@ export const metadata = {
             "displayName": [
               "Option"
             ],
-            "type": 7
+            "type": 8
           },
           "selector": "0x713e8f6c"
         },
@@ -279,6 +304,22 @@ export const metadata = {
         {
           "args": [],
           "docs": [
+            " Returns the address of the marketplace for exchanging this game's rewards for tickets."
+          ],
+          "label": "marketplace",
+          "mutates": false,
+          "payable": false,
+          "returnType": {
+            "displayName": [
+              "AccountId"
+            ],
+            "type": 1
+          },
+          "selector": "0x980bd6ab"
+        },
+        {
+          "args": [],
+          "docs": [
             " Returns own code hash"
           ],
           "label": "code_hash",
@@ -288,7 +329,7 @@ export const metadata = {
             "displayName": [
               "ButtonResult"
             ],
-            "type": 8
+            "type": 9
           },
           "selector": "0xbd69cea7"
         },
@@ -306,7 +347,7 @@ export const metadata = {
             "displayName": [
               "ButtonResult"
             ],
-            "type": 14
+            "type": 16
           },
           "selector": "0x55d7a21d"
         },
@@ -326,7 +367,7 @@ export const metadata = {
             "displayName": [
               "ButtonResult"
             ],
-            "type": 14
+            "type": 16
           },
           "selector": "0xdbd37e6c"
         },
@@ -355,7 +396,7 @@ export const metadata = {
             "displayName": [
               "ButtonResult"
             ],
-            "type": 14
+            "type": 16
           },
           "selector": "0x5c864ac6"
         },
@@ -373,7 +414,7 @@ export const metadata = {
             "displayName": [
               "ButtonResult"
             ],
-            "type": 14
+            "type": 16
           },
           "selector": "0x476d839f"
         }
@@ -445,6 +486,14 @@ export const metadata = {
         "id": 5,
         "type": {
           "def": {
+            "primitive": "u64"
+          }
+        }
+      },
+      {
+        "id": 6,
+        "type": {
+          "def": {
             "variant": {
               "variants": [
                 {
@@ -470,7 +519,7 @@ export const metadata = {
         }
       },
       {
-        "id": 6,
+        "id": 7,
         "type": {
           "def": {
             "primitive": "bool"
@@ -478,7 +527,7 @@ export const metadata = {
         }
       },
       {
-        "id": 7,
+        "id": 8,
         "type": {
           "def": {
             "variant": {
@@ -511,7 +560,7 @@ export const metadata = {
         }
       },
       {
-        "id": 8,
+        "id": 9,
         "type": {
           "def": {
             "variant": {
@@ -519,7 +568,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 9
+                      "type": 10
                     }
                   ],
                   "index": 0,
@@ -528,7 +577,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 10
+                      "type": 11
                     }
                   ],
                   "index": 1,
@@ -540,11 +589,11 @@ export const metadata = {
           "params": [
             {
               "name": "T",
-              "type": 9
+              "type": 10
             },
             {
               "name": "E",
-              "type": 10
+              "type": 11
             }
           ],
           "path": [
@@ -553,7 +602,7 @@ export const metadata = {
         }
       },
       {
-        "id": 9,
+        "id": 10,
         "type": {
           "def": {
             "composite": {
@@ -573,7 +622,7 @@ export const metadata = {
         }
       },
       {
-        "id": 10,
+        "id": 11,
         "type": {
           "def": {
             "variant": {
@@ -589,7 +638,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 11,
+                      "type": 12,
                       "typeName": "Role"
                     }
                   ],
@@ -599,7 +648,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 12,
+                      "type": 13,
                       "typeName": "PSP22Error"
                     }
                   ],
@@ -609,7 +658,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 13,
+                      "type": 15,
                       "typeName": "String"
                     }
                   ],
@@ -619,6 +668,10 @@ export const metadata = {
                 {
                   "index": 5,
                   "name": "CantRetrieveOwnCodeHash"
+                },
+                {
+                  "index": 6,
+                  "name": "Arithmethic"
                 }
               ]
             }
@@ -631,7 +684,7 @@ export const metadata = {
         }
       },
       {
-        "id": 11,
+        "id": 12,
         "type": {
           "def": {
             "variant": {
@@ -659,25 +712,55 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 9,
+                      "type": 10,
                       "typeName": "Hash"
                     }
                   ],
                   "index": 2,
                   "name": "Initializer"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 1,
+                      "typeName": "AccountId"
+                    }
+                  ],
+                  "index": 3,
+                  "name": "LiquidityProvider"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 1,
+                      "typeName": "AccountId"
+                    }
+                  ],
+                  "index": 4,
+                  "name": "Minter"
+                },
+                {
+                  "fields": [
+                    {
+                      "type": 1,
+                      "typeName": "AccountId"
+                    }
+                  ],
+                  "index": 5,
+                  "name": "Burner"
                 }
               ]
             }
           },
           "path": [
             "access_control",
-            "access_control",
+            "roles",
             "Role"
           ]
         }
       },
       {
-        "id": 12,
+        "id": 13,
         "type": {
           "def": {
             "variant": {
@@ -685,7 +768,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 13,
+                      "type": 14,
                       "typeName": "String"
                     }
                   ],
@@ -711,7 +794,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 13,
+                      "type": 14,
                       "typeName": "String"
                     }
                   ],
@@ -731,7 +814,17 @@ export const metadata = {
         }
       },
       {
-        "id": 13,
+        "id": 14,
+        "type": {
+          "def": {
+            "sequence": {
+              "type": 3
+            }
+          }
+        }
+      },
+      {
+        "id": 15,
         "type": {
           "def": {
             "primitive": "str"
@@ -739,7 +832,7 @@ export const metadata = {
         }
       },
       {
-        "id": 14,
+        "id": 16,
         "type": {
           "def": {
             "variant": {
@@ -747,7 +840,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 15
+                      "type": 17
                     }
                   ],
                   "index": 0,
@@ -756,7 +849,7 @@ export const metadata = {
                 {
                   "fields": [
                     {
-                      "type": 10
+                      "type": 11
                     }
                   ],
                   "index": 1,
@@ -768,11 +861,11 @@ export const metadata = {
           "params": [
             {
               "name": "T",
-              "type": 15
+              "type": 17
             },
             {
               "name": "E",
-              "type": 10
+              "type": 11
             }
           ],
           "path": [
@@ -781,7 +874,7 @@ export const metadata = {
         }
       },
       {
-        "id": 15,
+        "id": 17,
         "type": {
           "def": {
             "tuple": []
@@ -828,7 +921,7 @@ export interface Event_GameReset {
   when: BlockNumber
 }
 
-export type Message = Message_deadline | Message_is_dead | Message_last_presser | Message_access_control | Message_reward_token | Message_ticket_token | Message_code_hash | Message_press | Message_reset | Message_set_access_control | Message_terminate
+export type Message = Message_deadline | Message_round | Message_is_dead | Message_last_presser | Message_access_control | Message_reward_token | Message_ticket_token | Message_marketplace | Message_code_hash | Message_press | Message_reset | Message_set_access_control | Message_terminate
 
 /**
  *  Returns the current deadline
@@ -837,6 +930,13 @@ export type Message = Message_deadline | Message_is_dead | Message_last_presser 
  */
 export interface Message_deadline {
   __kind: 'deadline'
+}
+
+/**
+ *  Returns the curent round number
+ */
+export interface Message_round {
+  __kind: 'round'
 }
 
 /**
@@ -873,6 +973,13 @@ export interface Message_reward_token {
  */
 export interface Message_ticket_token {
   __kind: 'ticket_token'
+}
+
+/**
+ *  Returns the address of the marketplace for exchanging this game's rewards for tickets.
+ */
+export interface Message_marketplace {
+  __kind: 'marketplace'
 }
 
 /**
@@ -928,6 +1035,7 @@ export interface Constructor_new {
   __kind: 'new'
   ticketToken: AccountId
   rewardToken: AccountId
+  marketplace: AccountId
   buttonLifetime: BlockNumber
   scoring: Scoring
 }
