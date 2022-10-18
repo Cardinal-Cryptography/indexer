@@ -44,3 +44,35 @@ runs:
       run: |
         aws s3 cp ${{ env.S3BUCKET_URL }}/commit_sha.txt commit_sha.txt
         echo "METADATA_COMMIT_SHA=$(cat commit_sha.txt)" >> $GITHUB_ENV
+
+    - name: GIT | Checkout aleph-apps repo
+      uses: actions/checkout@master
+      with:
+        repository: Cardinal-Cryptography/aleph-apps
+        token: ${{ secrets.CI_GH_TOKEN }}
+        path: "aleph-apps"
+        ref: A0-1459-indexer
+    
+    - name: KUSTOMIZE | Init kustomize
+      uses: imranismail/setup-kustomize@v1
+      with:
+        kustomize-version: '3.8.6'
+
+    - name: KUSTOMIZE | Update docker image tag
+      env:
+        DEPLOY_IMAGE: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ inputs.deploy_fe_benjamin_image == 'true' && format('{1}{2}-', 'fe-benjamin-', env.METADATA_COMMIT_SHA) || '' }}${{ steps.vars.outputs.sha_short }}
+      run: |
+        cd aleph-apps/indexer/overlays/devnet/eu-central-1
+        kustomize edit set image "${{ inputs.registry }}-image-placeholder=${{ env.DEPLOY_IMAGE }}"
+
+    - name: GIT | Commit changes to aleph-apps repository
+      uses: EndBug/add-and-commit@v5.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.CI_GH_TOKEN }}
+      with:
+        author_name: AlephZero Automation
+        author_email: alephzero@10clouds.com
+        message: 'Updating Indexer ${{ inputs.registry }} docker image tag: ${{ steps.vars.outputs.branch }}'
+        add: '*.yaml'
+        cwd: 'aleph-apps'
+        branch: A0-1459-indexer
