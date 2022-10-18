@@ -31,10 +31,6 @@ on:
       - main
       - A0-1459-modify-workflow-to-push-the-image
 
-concurrency:
-  group: ${{ github.ref }}-${{ github.workflow }}
-  cancel-in-progress: true
-
 jobs:
   build_and_push_processor:
     name: Build and push Processor
