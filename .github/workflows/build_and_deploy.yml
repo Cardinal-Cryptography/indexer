@@ -74,7 +74,7 @@ jobs:
 
   deploy_processor:
     name: Deploy Processor
-    if: ${{ github.event != 'workflow_dispatch' || inputs.deployImages }}
+    if: ${{ (always() && (needs.build_and_push_processor.result == 'success' || needs.build_and_push_processor.result == 'skipped')) && (github.event != 'workflow_dispatch' || inputs.deployImages) }}
     needs: build_and_push_processor
     runs-on: ubuntu-20.04
     steps:
@@ -94,7 +94,7 @@ jobs:
   
   deploy_api:
     name: Deploy API
-    if: ${{ github.event != 'workflow_dispatch' || inputs.deployImages }}
+    if: ${{ (always() && (needs.build_and_push_api.result == 'success' || needs.build_and_push_api.result == 'skipped')) && (github.event != 'workflow_dispatch' || inputs.deployImages) }}
     needs: build_and_push_api
     runs-on: ubuntu-20.04
     steps:
