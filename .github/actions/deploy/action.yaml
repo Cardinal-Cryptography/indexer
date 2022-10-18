@@ -59,7 +59,7 @@ runs:
     - name: KUSTOMIZE | Update docker image tag
       shell: bash
       env:
-        DEPLOY_IMAGE: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ inputs.deploy_fe_benjamin_image == 'true' && format('{0}{1}-', 'fe-benjamin-', env.METADATA_COMMIT_SHA) || '' }}${{ steps.vars.outputs.sha_short }}
+        DEPLOY_IMAGE: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ inputs.deploy_fe_benjamin_image == 'true' && format('{0}{1}-', 'fe-benjamin-', env.METADATA_COMMIT_SHA) || '' }}${{ steps.get_branch.outputs.sha_short }}
       run: |
         cd aleph-apps/indexer/overlays/devnet/eu-central-1
         kustomize edit set image "${{ inputs.registry }}-image-placeholder=${{ env.DEPLOY_IMAGE }}"

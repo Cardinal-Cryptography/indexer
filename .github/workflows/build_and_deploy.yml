@@ -93,8 +93,8 @@ jobs:
   
   deploy_api:
     name: Deploy API
-    if: ${{ (always() && (needs.build_and_push_api.result == 'success' || needs.build_and_push_api.result == 'skipped')) && (github.event != 'workflow_dispatch' || inputs.deployImages) }}
-    needs: build_and_push_api
+    if: ${{ (always() && (needs.build_and_push_api.result == 'success' || needs.build_and_push_api.result == 'skipped') && (needs.deploy_processor.result == 'success' || needs.deploy_processor.result == 'skipped')) && (github.event != 'workflow_dispatch' || inputs.deployImages) }}
+    needs: [build_and_push_api, deploy_processor]
     runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
