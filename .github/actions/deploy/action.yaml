@@ -1,0 +1,46 @@
+name: Deploy docker image to devnet
+
+inputs:
+  registry:
+    description: Registry name, either squid-processor or squid-api
+    required: true
+  deploy_fe_benjamin_image:
+    description: If 'true', image with metadata from fe-benjamin will be deployed
+  aws_devnet_access_key_id:
+    required: true
+  aws_devnet_secret_access_key:
+    required: true
+  ci_s3bucket_name:
+    required: true
+  github_token:
+    required: true
+  argocd_token:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: GIT | Get branch info & current commit sha.
+      id: get_branch
+      shell: bash
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
+        echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+    - name: BENJAMIN JSON | Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      env:
+        AWS_REGION: us-east-1
+      with:
+        aws-access-key-id: ${{ inputs.aws_devnet_access_key_id }}
+        aws-secret-access-key: ${{ inputs.aws_devnet_secret_access_key }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: BENJAMIN JSON | Copy commit_sha.txt from S3 bucket
+      if: ${{ inputs.deploy_fe_benjamin_image == 'true' }}
+      shell: bash
+      env:
+        S3BUCKET_URL: s3://${{ inputs.ci_s3bucket_name }}/contracts/fe-benjamin-button
+      run: |
+        aws s3 cp ${{ env.S3BUCKET_URL }}/commit_sha.txt commit_sha.txt
+        echo "METADATA_COMMIT_SHA=$(cat commit_sha.txt)" >> $GITHUB_ENV

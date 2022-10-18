@@ -38,13 +38,13 @@ concurrency:
 jobs:
   build_and_push_processor:
     name: Build and push Processor
+    if: ${{ github.event != 'workflow_dispatch' || inputs.buildImages }}
     runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
         uses: actions/checkout@v2
 
       - name: DOCKER | Build and push squid-processor image
-        if: ${{ github.event != 'workflow_dispatch' || inputs.buildImages }}
         uses: ./.github/actions/build-and-push
         with:
           registry: squid-processor
@@ -54,16 +54,17 @@ jobs:
           aws_mainnet_secret_access_key: ${{ secrets.AWS_MAINNET_SECRET_ACCESS_KEY }}
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+          ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
 
   build_and_push_api:
     name: Build and push API
+    if: ${{ github.event != 'workflow_dispatch' || inputs.buildImages }}
     runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
         uses: actions/checkout@v2
 
       - name: DOCKER | Build and push squid-api image
-        if: ${{ github.event != 'workflow_dispatch' || inputs.buildImages }}
         uses: ./.github/actions/build-and-push
         with:
           registry: squid-api
@@ -73,3 +74,42 @@ jobs:
           aws_mainnet_secret_access_key: ${{ secrets.AWS_MAINNET_SECRET_ACCESS_KEY }}
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+          ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
+
+  deploy_processor:
+    name: Deploy Processor
+    if: ${{ github.event != 'workflow_dispatch' || inputs.deployImages }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: GIT | Checkout
+        uses: actions/checkout@v2
+
+      - name: DEVNET | Deploy squid-process image to devnet
+        uses: ./.github/actions/deploy
+        with:
+          registry: squid-processor
+          deploy_fe_benjamin_image: ${{ (github.event != 'workflow_dispatch' || inputs.deployFEBenjaminImages) && 'true' || 'false' }}
+          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
+          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+          github_token: todo
+          argocd_token: todo
+          ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
+  
+  deploy_api:
+    name: Deploy API
+    if: ${{ github.event != 'workflow_dispatch' || inputs.deployImages }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: GIT | Checkout
+        uses: actions/checkout@v2
+
+      - name: DEVNET | Deploy squid-api image to devnet
+        uses: ./.github/actions/deploy
+        with:
+          registry: squid-api
+          deploy_fe_benjamin_image: ${{ (github.event != 'workflow_dispatch' || inputs.deployFEBenjaminImages) && 'true' || 'false' }}
+          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
+          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+          github_token: todo
+          argocd_token: todo
+          ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}

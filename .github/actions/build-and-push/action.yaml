@@ -18,6 +18,8 @@ inputs:
     required: true
   aws_devnet_secret_access_key:
     required: true
+  ci_s3bucket_name:
+    required: true
 
 outputs:
   image:
@@ -76,7 +78,7 @@ runs:
       shell: bash
       env:
         METADATA_PATH: src/addresses
-        S3BUCKET_URL: s3://alephzero-devnet-eu-central-1-ci/contracts/fe-benjamin-button
+        S3BUCKET_URL: s3://${{ inputs.ci_s3bucket_name }}/contracts/fe-benjamin-button
       run: |
         mkdir -p ${{ env.METADATA_PATH }}
         aws s3 cp ${{ env.S3BUCKET_URL }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
