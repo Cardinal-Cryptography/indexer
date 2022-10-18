@@ -71,7 +71,7 @@ runs:
       with:
         author_name: AlephZero Automation
         author_email: alephzero@10clouds.com
-        message: 'Updating Indexer ${{ inputs.registry }} docker image tag: ${{ steps.vars.outputs.branch }}'
+        message: 'Updating Indexer ${{ inputs.registry }} docker image tag: ${{ steps.get_branch.outputs.branch }}'
         add: '*.yaml'
         cwd: 'aleph-apps'
         branch: A0-1459-indexer
