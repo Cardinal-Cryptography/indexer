@@ -19,7 +19,7 @@ runs:
   using: composite
   steps:
     - name: Check if registry input is valid
-      if: ${{ inputs.registry != 'squid-processor' || inputs.registry != 'squid-api' }}
+      if: ${{ inputs.registry != 'squid-processor' && inputs.registry != 'squid-api' }}
       shell: bash
       run: |
         echo "Invalid registry input"
