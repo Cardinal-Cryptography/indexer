@@ -9,7 +9,6 @@ inputs:
     required: true
   build_fe_benjamin_image:
     description: If 'true', an additional image with metadata from fe-benjamin will be built
-    required: true
   aws_mainnet_access_key_id:
     required: true
   aws_mainnet_secret_access_key:
@@ -32,6 +31,13 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Check if registry input is valid
+      if: ${{ inputs.registry != 'squid-processor' || inputs.registry != 'squid-api' }}
+      shell: bash
+      run: |
+        echo "Invalid registry input"
+        exit 1
+
     - name: GIT | Get branch info & current commit sha.
       id: get_branch
       shell: bash

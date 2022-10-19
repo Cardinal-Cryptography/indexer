@@ -18,6 +18,13 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Check if registry input is valid
+      if: ${{ inputs.registry != 'squid-processor' || inputs.registry != 'squid-api' }}
+      shell: bash
+      run: |
+        echo "Invalid registry input"
+        exit 1
+
     - name: GIT | Get branch info & current commit sha.
       id: get_branch
       shell: bash
@@ -61,7 +68,7 @@ runs:
       env:
         DEPLOY_IMAGE: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ inputs.deploy_fe_benjamin_image == 'true' && format('{0}{1}-', 'fe-benjamin-', env.METADATA_COMMIT_SHA) || '' }}${{ steps.get_branch.outputs.sha_short }}
       run: |
-        cd aleph-apps/indexer/overlays/devnet/eu-central-1
+        cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
         kustomize edit set image "${{ inputs.registry }}-image-placeholder=${{ env.DEPLOY_IMAGE }}"
 
     - name: GIT | Commit changes to aleph-apps repository
