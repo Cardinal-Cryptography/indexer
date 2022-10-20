@@ -13,16 +13,6 @@ on:
         required: false
         type: boolean
         default: true
-      buildFEBenjaminImages:
-        description: 'Build docker images with metadata for fe-benjamin'
-        required: false
-        type: boolean
-        default: true
-      deployFEBenjaminImages:
-        description: 'Deploy docker images with metadata for fe-benjamin instead of original ones'
-        required: false
-        type: boolean
-        default: true
 
   push:
     paths-ignore:
@@ -45,7 +35,7 @@ jobs:
         with:
           registry: squid-processor
           target: processor
-          build_fe_benjamin_image: ${{ (github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages) && 'true' || 'false' }}
+          download_featurenet_addresses: 'true'
           aws_mainnet_access_key_id: ${{ secrets.AWS_MAINNET_ACCESS_KEY_ID }}
           aws_mainnet_secret_access_key: ${{ secrets.AWS_MAINNET_SECRET_ACCESS_KEY }}
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
@@ -65,7 +55,7 @@ jobs:
         with:
           registry: squid-api
           target: query-node
-          build_fe_benjamin_image: ${{ (github.event != 'workflow_dispatch' || inputs.buildFEBenjaminImages) && 'true' || 'false' }}
+          download_featurenet_addresses: 'true'
           aws_mainnet_access_key_id: ${{ secrets.AWS_MAINNET_ACCESS_KEY_ID }}
           aws_mainnet_secret_access_key: ${{ secrets.AWS_MAINNET_SECRET_ACCESS_KEY }}
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
@@ -85,7 +75,6 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           registry: squid-processor
-          deploy_fe_benjamin_image: ${{ (github.event != 'workflow_dispatch' || inputs.deployFEBenjaminImages) && 'true' || 'false' }}
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}
@@ -104,7 +93,6 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           registry: squid-api
-          deploy_fe_benjamin_image: ${{ (github.event != 'workflow_dispatch' || inputs.deployFEBenjaminImages) && 'true' || 'false' }}
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}

@@ -7,7 +7,7 @@ inputs:
   target:
     description: --target argument for docker build command
     required: true
-  build_fe_benjamin_image:
+  download_featurenet_addresses:
     description: If 'true', an additional image with metadata from fe-benjamin will be built
   aws_mainnet_access_key_id:
     required: true
@@ -24,9 +24,6 @@ outputs:
   image:
     description: Image URL
     value: ${{ steps.outputs.outputs.image }}
-  fe_benjamin_image:
-    description: URL of the image with fe-benjamin metadata
-    value: ${{ steps.outputs.outpus.fe_benjamin_image }}
 
 runs:
   using: composite
@@ -55,6 +52,27 @@ runs:
       env:
         AWS_REGION: us-east-1
 
+    - name: FEATURENET ADDRESSES | Configure AWS credentials
+      if: ${{ inputs.download_featurenet_addresses == 'true' }}
+      uses: aws-actions/configure-aws-credentials@v1
+      env:
+        AWS_REGION: us-east-1
+      with:
+        aws-access-key-id: ${{ inputs.aws_devnet_access_key_id }}
+        aws-secret-access-key: ${{ inputs.aws_devnet_secret_access_key }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: FEATURENET ADDRESSES | Copy addresses.json files from S3 bucket
+      if: ${{ inputs.download_featurenet_addresses == 'true' }}
+      shell: bash
+      env:
+        METADATA_PATH: src/addresses
+        S3BUCKET_URL: s3://${{ inputs.ci_s3bucket_name }}/contracts/fe-benjamin-button
+      run: |
+        mkdir -p ${{ env.METADATA_PATH }}
+        aws s3 cp ${{ env.S3BUCKET_URL }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
+        aws s3 cp ${{ env.S3BUCKET_URL }}/commit_sha.txt ${{ env.METADATA_PATH}}/commit_sha.txt
+
     - name: DOCKER | Set up Docker Buildx
       id: buildx
       uses: docker/setup-buildx-action@master
@@ -70,50 +88,8 @@ runs:
         tags: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}
         target: ${{ inputs.target }}
 
-    - name: BENJAMIN JSON | Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      env:
-        AWS_REGION: us-east-1
-      with:
-        aws-access-key-id: ${{ inputs.aws_devnet_access_key_id }}
-        aws-secret-access-key: ${{ inputs.aws_devnet_secret_access_key }}
-        aws-region: ${{ env.AWS_REGION }}
-
-    - name: BENJAMIN JSON | Copy addresses.json files from S3 bucket
-      if: ${{ inputs.build_fe_benjamin_image == 'true' }}
-      shell: bash
-      env:
-        METADATA_PATH: src/addresses
-        S3BUCKET_URL: s3://${{ inputs.ci_s3bucket_name }}/contracts/fe-benjamin-button
-      run: |
-        mkdir -p ${{ env.METADATA_PATH }}
-        aws s3 cp ${{ env.S3BUCKET_URL }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
-        aws s3 cp ${{ env.S3BUCKET_URL }}/commit_sha.txt commit_sha.txt
-        echo "METADATA_COMMIT_SHA=$(cat commit_sha.txt)" >> $GITHUB_ENV
-
-    - name: BENJAMIN DOCKER | Create a Dockerfile to build docker image with fe-benjamin
-      if: ${{ inputs.build_fe_benjamin_image == 'true' }}
-      shell: bash
-      env:
-        METADATA_PATH: src/addresses
-      run: |
-        echo "FROM public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}" > Dockerfile.fe-benjamin
-        echo 'COPY ${{ env.METADATA_PATH }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json' >> Dockerfile.fe-benjamin
-
-    - name: BENJAMIN DOCKER | Build and push latest docker image with fe-benjamin
-      if: ${{ inputs.build_fe_benjamin_image == 'true' }}
-      id: build-fe-image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        builder: ${{ steps.buildx.outputs.name }}
-        file: ./Dockerfile.fe-benjamin
-        push: true
-        tags: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:fe-benjamin-${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}
-
     - name: OUTPUTS | Set outputs with docker images
       id: outputs
       shell: bash
       run: |
         echo "::set-output name=image::public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}"
-        echo "::set-output name=fe_benjamin_image::public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:fe-benjamin-${{ env.METADATA_COMMIT_SHA }}-${{ steps.get_branch.outputs.sha_short }}"

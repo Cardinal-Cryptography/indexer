@@ -4,8 +4,6 @@ inputs:
   registry:
     description: Registry name, either squid-processor or squid-api
     required: true
-  deploy_fe_benjamin_image:
-    description: If 'true', image with metadata from fe-benjamin will be deployed
   aws_devnet_access_key_id:
     required: true
   aws_devnet_secret_access_key:
@@ -32,24 +30,6 @@ runs:
         echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
         echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
-    - name: BENJAMIN JSON | Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      env:
-        AWS_REGION: us-east-1
-      with:
-        aws-access-key-id: ${{ inputs.aws_devnet_access_key_id }}
-        aws-secret-access-key: ${{ inputs.aws_devnet_secret_access_key }}
-        aws-region: ${{ env.AWS_REGION }}
-
-    - name: BENJAMIN JSON | Copy commit_sha.txt from S3 bucket
-      if: ${{ inputs.deploy_fe_benjamin_image == 'true' }}
-      shell: bash
-      env:
-        S3BUCKET_URL: s3://${{ inputs.ci_s3bucket_name }}/contracts/fe-benjamin-button
-      run: |
-        aws s3 cp ${{ env.S3BUCKET_URL }}/commit_sha.txt commit_sha.txt
-        echo "METADATA_COMMIT_SHA=$(cat commit_sha.txt)" >> $GITHUB_ENV
-
     - name: GIT | Checkout aleph-apps repo
       uses: actions/checkout@master
       with:
@@ -66,7 +46,7 @@ runs:
     - name: KUSTOMIZE | Update docker image tag
       shell: bash
       env:
-        DEPLOY_IMAGE: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ inputs.deploy_fe_benjamin_image == 'true' && format('{0}{1}-', 'fe-benjamin-', env.METADATA_COMMIT_SHA) || '' }}${{ steps.get_branch.outputs.sha_short }}
+        DEPLOY_IMAGE: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}
       run: |
         cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
         kustomize edit set image "${{ inputs.registry }}-image-placeholder=${{ env.DEPLOY_IMAGE }}"
