@@ -24,6 +24,12 @@ outputs:
   image:
     description: Image URL
     value: ${{ steps.outputs.outputs.image }}
+  featurenet_commit_sha:
+    description: Commit SHA of addresses.json from
+    value: ${{ steps.outputs.featurenet.commit_sha }}
+  featurenet_file_sha_checksum:
+    description: SHA checksum of featurenet's addresses.json
+    value: ${{ steps.outputs.featurenet.file_sha_checksum }}
 
 runs:
   using: composite
@@ -65,6 +71,7 @@ runs:
     - name: FEATURENET ADDRESSES | Copy addresses.json files from S3 bucket
       if: ${{ inputs.download_featurenet_addresses == 'true' }}
       shell: bash
+      id: featurenet
       env:
         METADATA_PATH: src/addresses
         S3BUCKET_URL: s3://${{ inputs.ci_s3bucket_name }}/contracts/fe-benjamin-button
@@ -72,6 +79,9 @@ runs:
         mkdir -p ${{ env.METADATA_PATH }}
         aws s3 cp ${{ env.S3BUCKET_URL }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
         aws s3 cp ${{ env.S3BUCKET_URL }}/commit_sha.txt ${{ env.METADATA_PATH}}/commit_sha.txt
+        shasum -a 512 ${{ env.METADATA_PATH }}/addresses.json | awk '{ print $1 }' > addresses.json.checksum
+        echo "featurenet_file_sha_checksum=$(cat addresses.json.checksum)" >> $GITHUB_OUTPUT
+        echo "featurenet_commit_sha=$(cat commit_sha.txt)" >> $GITHUB_OUTPUT
 
     - name: DOCKER | Set up Docker Buildx
       id: buildx
