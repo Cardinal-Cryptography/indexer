@@ -15,7 +15,7 @@ services:
       GATEWAY_HOST: "archive-gateway" #"${GATEWAY_HOST}"
       GATEWAY_PORT: "${GATEWAY_PORT}"
 
-  # localhost:4355      
+  # localhost:4355
   squid-api:
     build:
       context: .
@@ -27,7 +27,7 @@ services:
       GQL_PORT: "${GQL_PORT}"
     ports:
       - "127.0.0.1:${GQL_PORT}:${GQL_PORT}"
-      
+
 networks:
   default:
     external:

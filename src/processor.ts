@@ -71,6 +71,7 @@ function extractPressEvents(ctx: Ctx): ButtonPressEvent[] {
 }
 
 processor.run(new TypeormDatabase(), async ctx => {
+    console.log(addresses, 'processor will listen to the events from addresses')
 
     const events = extractPressEvents(ctx)
 
