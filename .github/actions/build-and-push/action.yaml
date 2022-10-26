@@ -21,9 +21,9 @@ inputs:
     required: true
 
 outputs:
-  image:
-    description: Image URL
-    value: ${{ steps.outputs.outputs.image }}
+  image_tag:
+    description: Tag of the pushed image
+    value: ${{ steps.outputs.outputs.image_tag }}
   featurenet_commit_sha:
     description: Commit SHA of addresses.json from
     value: ${{ steps.outputs.featurenet.commit_sha }}
@@ -102,4 +102,4 @@ runs:
       id: outputs
       shell: bash
       run: |
-        echo "image=public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}-${{ steps.featurenet.outputs.featurenet_commit_sha }}" >> $GITHUB_OUTPUT
+        echo "image_tag=${{ steps.get_branch.outputs.sha_short }}-${{ steps.featurenet.outputs.featurenet_commit_sha }}" >> $GITHUB_OUTPUT

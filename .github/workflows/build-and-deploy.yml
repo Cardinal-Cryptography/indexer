@@ -2,17 +2,6 @@ name: Build and deploy
 
 on:
   workflow_dispatch:
-    inputs:
-      buildImages:
-        description: 'Build and push docker images'
-        required: false
-        type: boolean
-        default: true
-      deployImages:
-        description: 'Deploy images'
-        required: false
-        type: boolean
-        default: true
 
   push:
     paths-ignore:
@@ -24,7 +13,7 @@ on:
 jobs:
   build_and_push_processor:
     name: Build and push Processor
-    if: ${{ github.event != 'workflow_dispatch' || inputs.buildImages }}
+    id: build_and_push_processor
     runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
@@ -32,6 +21,7 @@ jobs:
 
       - name: DOCKER | Build and push squid-processor image
         uses: ./.github/actions/build-and-push
+        id: build_processor
         with:
           registry: squid-processor
           target: processor
@@ -41,10 +31,12 @@ jobs:
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
+    outputs:
+      image_tag: ${{ steps.build_processor.outputs.image_tag }}
 
   build_and_push_api:
     name: Build and push API
-    if: ${{ github.event != 'workflow_dispatch' || inputs.buildImages }}
+    id: build_and_push_api
     runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
@@ -52,6 +44,7 @@ jobs:
 
       - name: DOCKER | Build and push squid-api image
         uses: ./.github/actions/build-and-push
+        id: build_api
         with:
           registry: squid-api
           target: query-node
@@ -61,10 +54,11 @@ jobs:
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
+    outputs:
+      image_tag: ${{ steps.build_api.outputs.image_tag }}
 
   deploy_processor:
     name: Deploy Processor
-    if: ${{ (always() && (needs.build_and_push_processor.result == 'success' || needs.build_and_push_processor.result == 'skipped')) && (github.event != 'workflow_dispatch' || inputs.deployImages) }}
     needs: build_and_push_processor
     runs-on: ubuntu-20.04
     steps:
@@ -75,6 +69,7 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           registry: squid-processor
+          image_tag: ${{ needs.build_and_push_processor.outputs.image_tag }}
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}
@@ -82,7 +77,6 @@ jobs:
   
   deploy_api:
     name: Deploy API
-    if: ${{ (always() && (needs.build_and_push_api.result == 'success' || needs.build_and_push_api.result == 'skipped') && (needs.deploy_processor.result == 'success' || needs.deploy_processor.result == 'skipped')) && (github.event != 'workflow_dispatch' || inputs.deployImages) }}
     needs: [build_and_push_api, deploy_processor]
     runs-on: ubuntu-20.04
     steps:
@@ -93,6 +87,7 @@ jobs:
         uses: ./.github/actions/deploy
         with:
           registry: squid-api
+          image_tag: ${{ needs.build_and_push_api.outputs.image_tag }}
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}

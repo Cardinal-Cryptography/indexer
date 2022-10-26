@@ -4,6 +4,9 @@ inputs:
   registry:
     description: Registry name, either squid-processor or squid-api
     required: true
+  image_tag:
+    description: Tag of the docker image to be deployed
+    required: true
   aws_devnet_access_key_id:
     required: true
   aws_devnet_secret_access_key:
@@ -46,7 +49,7 @@ runs:
     - name: KUSTOMIZE | Update docker image tag
       shell: bash
       env:
-        DEPLOY_IMAGE: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}
+        DEPLOY_IMAGE: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ inputs.image_tag }}
       run: |
         cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
         kustomize edit set image "${{ inputs.registry }}-image-placeholder=${{ env.DEPLOY_IMAGE }}"
@@ -58,7 +61,7 @@ runs:
       with:
         author_name: AlephZero Automation
         author_email: alephzero@10clouds.com
-        message: 'Updating Indexer ${{ inputs.registry }} docker image tag: ${{ steps.get_branch.outputs.branch }}'
+        message: 'Updating Indexer ${{ inputs.registry }} docker image tag: ${{ inputs.image_tag }}'
         add: '*.yaml'
         cwd: 'aleph-apps'
         branch: A0-1459-indexer
