@@ -26,10 +26,10 @@ outputs:
     value: ${{ steps.outputs.outputs.image_tag }}
   featurenet_commit_sha:
     description: Commit SHA of addresses.json from
-    value: ${{ steps.outputs.featurenet.commit_sha }}
+    value: ${{ steps.featurenet.outputs.commit_sha }}
   featurenet_addresses_checksum:
     description: SHA checksum of featurenet's addresses.json
-    value: ${{ steps.outputs.featurenet.file_sha_checksum }}
+    value: ${{ steps.featurenet.outputs.file_sha_checksum }}
 
 runs:
   using: composite
