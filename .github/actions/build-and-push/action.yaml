@@ -78,7 +78,7 @@ runs:
       run: |
         mkdir -p ${{ env.METADATA_PATH }}
         aws s3 cp ${{ env.S3BUCKET_URL }}/addresses.json ${{ env.METADATA_PATH }}/addresses.json
-        aws s3 cp ${{ env.S3BUCKET_URL }}/commit_sha.txt ${{ env.METADATA_PATH}}/commit_sha.txt
+        aws s3 cp ${{ env.S3BUCKET_URL }}/commit_sha.txt ${{ env.METADATA_PATH }}/commit_sha.txt
         shasum -a 512 ${{ env.METADATA_PATH }}/addresses.json | awk '{ print $1 }' > addresses.json.checksum
         echo "featurenet_addresses_checksum=$(cat addresses.json.checksum)" >> $GITHUB_OUTPUT
         echo "featurenet_commit_sha=$(cat ${{ env.METADATA_PATH}}/commit_sha.txt)" >> $GITHUB_OUTPUT
@@ -95,11 +95,11 @@ runs:
         builder: ${{ steps.buildx.outputs.name }}
         file: ./Dockerfile
         push: true
-        tags: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}
+        tags: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}-${{ steps.featurenet.outputs.featurenet_commit_sha }}
         target: ${{ inputs.target }}
 
     - name: OUTPUTS | Set outputs with docker images
       id: outputs
       shell: bash
       run: |
-        echo "image=public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}" >> $GITHUB_OUTPUT
+        echo "image=public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ steps.get_branch.outputs.sha_short }}-${{ steps.featurenet.outputs.featurenet_commit_sha }}" >> $GITHUB_OUTPUT
