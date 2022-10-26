@@ -13,7 +13,6 @@ on:
 jobs:
   build_and_push_processor:
     name: Build and push Processor
-    id: build_and_push_processor
     runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
@@ -36,7 +35,6 @@ jobs:
 
   build_and_push_api:
     name: Build and push API
-    id: build_and_push_api
     runs-on: ubuntu-20.04
     steps:
       - name: GIT | Checkout
