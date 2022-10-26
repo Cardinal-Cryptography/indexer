@@ -7,6 +7,12 @@ inputs:
   image_tag:
     description: Tag of the docker image to be deployed
     required: true
+  featurenet_addresses_checksum: 
+    description: Checksum of addresses.json file from featurenet
+    required: true
+  featurenet_commit_sha:
+    description: SHA of commit from featurenet that addreses were built from
+    required: true
   aws_devnet_access_key_id:
     required: true
   aws_devnet_secret_access_key:
@@ -46,7 +52,31 @@ runs:
       with:
         kustomize-version: '3.8.6'
 
-    - name: KUSTOMIZE | Update docker image tag
+    - name: KUSTOMIZE | Update archive database
+      if: ${{ inputs.registry == 'squid-processor' }}
+      shell: bash
+      run: |
+        cd aleph-apps/indexer/archive/overlays/devnet/eu-central-1
+        CADDRSUM=$(grep -n "name: CONTRACTS_ADDRESSES_CHECKSUM" kustomization.yaml | cut -d: -f1);
+        CADDRSUM=$((CADDRSUM+1));
+        sed "$CADDRSUM""s/value:.*/value: '${{ inputs.featurenet_addresses_checksum }}'/" kustomization.yaml
+        CCOMMSHA=$(grep -n "name: CONTRACTS_COMMIT_SHA" kustomization.yaml | cut -d: -f1);
+        CCOMMSHA=$((CCOMMSHA+1));
+        sed "$CCOMMSHA""s/value:.*/value: '${{ inputs.featurenet_commit_sha }}'/" kustomization.yaml
+
+    - name: KUSTOMIZE | Update squid database
+      if: ${{ inputs.registry == 'squid-processor' }}
+      shell: bash
+      run: |
+        cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
+        CADDRSUM=$(grep -n "name: CONTRACTS_ADDRESSES_CHECKSUM" kustomization.yaml | cut -d: -f1);
+        CADDRSUM=$((CADDRSUM+1));
+        sed "$CADDRSUM""s/value:.*/value: '${{ inputs.featurenet_addresses_checksum }}'/" kustomization.yaml
+        CCOMMSHA=$(grep -n "name: CONTRACTS_COMMIT_SHA" kustomization.yaml | cut -d: -f1);
+        CCOMMSHA=$((CCOMMSHA+1));
+        sed "$CCOMMSHA""s/value:.*/value: '${{ inputs.featurenet_commit_sha }}'/" kustomization.yaml
+
+    - name: KUSTOMIZE | Update docker image tag for squid
       shell: bash
       env:
         DEPLOY_IMAGE: public.ecr.aws/p6e8q1z1/${{ inputs.registry }}:${{ inputs.image_tag }}
