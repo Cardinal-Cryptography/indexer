@@ -8,6 +8,7 @@ on:
       - '*.md'
     branches:
       - master
+      - change-workflow-to-match-new-aleph-apps-env-vars-syntax
 
 jobs:
   build_and_push_processor:
