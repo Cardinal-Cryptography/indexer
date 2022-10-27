@@ -52,29 +52,21 @@ runs:
       with:
         kustomize-version: '3.8.6'
 
-    - name: KUSTOMIZE | Update archive database
+    - name: SED | Update archive database and apps
       if: ${{ inputs.registry == 'squid-processor' }}
       shell: bash
       run: |
         cd aleph-apps/indexer/archive/overlays/devnet/eu-central-1
-        CADDRSUM=$(grep -n "name: CONTRACTS_ADDRESSES_CHECKSUM" kustomization.yaml | cut -d: -f1);
-        CADDRSUM=$((CADDRSUM+1));
-        sed -i "$CADDRSUM""s/value:.*/value: '${{ inputs.featurenet_addresses_checksum }}'/" kustomization.yaml
-        CCOMMSHA=$(grep -n "name: CONTRACTS_COMMIT_SHA" kustomization.yaml | cut -d: -f1);
-        CCOMMSHA=$((CCOMMSHA+1));
-        sed -i "$CCOMMSHA""s/value:.*/value: '${{ inputs.featurenet_commit_sha }}'/" kustomization.yaml
+        sed -i 's/{[[:space:]]*name:[[:space:]]*CONTRACTS_ADDRESSES_CHECKSUM[[:space:]]*,[[:space:]]*value:.*}/{ name: CONTRACTS_ADDRESSES_CHECKSUM, value: "${{ inputs.featurenet_addresses_checksum }}" }/g' kustomization.yaml
+        sed -i 's/{[[:space:]]*name:[[:space:]]*CONTRACTS_COMMIT_SHA[[:space:]]*,[[:space:]]*value:.*}/{ name: CONTRACTS_COMMIT_SHA, value: "${{ inputs.featurenet_commit_sha }}" }/g' kustomization.yaml
 
-    - name: KUSTOMIZE | Update squid database
+    - name: SED | Update squid database and apps
       if: ${{ inputs.registry == 'squid-processor' }}
       shell: bash
       run: |
         cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
-        CADDRSUM=$(grep -n "name: CONTRACTS_ADDRESSES_CHECKSUM" kustomization.yaml | cut -d: -f1);
-        CADDRSUM=$((CADDRSUM+1));
-        sed -i "$CADDRSUM""s/value:.*/value: '${{ inputs.featurenet_addresses_checksum }}'/" kustomization.yaml
-        CCOMMSHA=$(grep -n "name: CONTRACTS_COMMIT_SHA" kustomization.yaml | cut -d: -f1);
-        CCOMMSHA=$((CCOMMSHA+1));
-        sed -i "$CCOMMSHA""s/value:.*/value: '${{ inputs.featurenet_commit_sha }}'/" kustomization.yaml
+        sed -i 's/{[[:space:]]*name:[[:space:]]*CONTRACTS_ADDRESSES_CHECKSUM[[:space:]]*,[[:space:]]*value:.*}/{ name: CONTRACTS_ADDRESSES_CHECKSUM, value: "${{ inputs.featurenet_addresses_checksum }}" }/g' kustomization.yaml
+        sed -i 's/{[[:space:]]*name:[[:space:]]*CONTRACTS_COMMIT_SHA[[:space:]]*,[[:space:]]*value:.*}/{ name: CONTRACTS_COMMIT_SHA, value: "${{ inputs.featurenet_commit_sha }}" }/g' kustomization.yaml
 
     - name: KUSTOMIZE | Update docker image tag for squid
       shell: bash
@@ -155,3 +147,4 @@ runs:
         kustomize build . | kubectl apply -f -
         sleep 3
         kubectl rollout status --watch --timeout=600s -n indexer-squid deploy/squid-api
+
