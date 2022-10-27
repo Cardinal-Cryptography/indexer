@@ -8,7 +8,6 @@ on:
       - '*.md'
     branches:
       - main
-      - A0-1459-modify-workflow-to-push-the-image
 
 jobs:
   build_and_push_processor:

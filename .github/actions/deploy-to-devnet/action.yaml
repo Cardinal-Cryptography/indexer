@@ -45,7 +45,7 @@ runs:
         repository: Cardinal-Cryptography/aleph-apps
         token: ${{ inputs.github_token }}
         path: "aleph-apps"
-        ref: A0-1459-indexer
+        ref: main
     
     - name: KUSTOMIZE | Init kustomize
       uses: imranismail/setup-kustomize@v1
@@ -94,7 +94,7 @@ runs:
         message: 'Updating Indexer ${{ inputs.registry }} docker image tag: ${{ inputs.image_tag }}'
         add: '*.yaml'
         cwd: 'aleph-apps'
-        branch: A0-1459-indexer
+        branch: main
 
     - name: AWS | Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
