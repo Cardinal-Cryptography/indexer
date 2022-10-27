@@ -45,7 +45,7 @@ runs:
         repository: Cardinal-Cryptography/aleph-apps
         token: ${{ inputs.github_token }}
         path: "aleph-apps"
-        ref: add-contract-env-vars-to-all-indexer-pods
+        ref: main
     
     - name: KUSTOMIZE | Init kustomize
       uses: imranismail/setup-kustomize@v1
@@ -86,4 +86,4 @@ runs:
         message: 'Updating Indexer ${{ inputs.registry }} docker image tag: ${{ inputs.image_tag }}'
         add: '*.yaml'
         cwd: 'aleph-apps'
-        branch: add-contract-env-vars-to-all-indexer-pods
+        branch: main
