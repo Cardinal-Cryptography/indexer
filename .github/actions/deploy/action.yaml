@@ -59,10 +59,10 @@ runs:
         cd aleph-apps/indexer/archive/overlays/devnet/eu-central-1
         CADDRSUM=$(grep -n "name: CONTRACTS_ADDRESSES_CHECKSUM" kustomization.yaml | cut -d: -f1);
         CADDRSUM=$((CADDRSUM+1));
-        sed "$CADDRSUM""s/value:.*/value: '${{ inputs.featurenet_addresses_checksum }}'/" kustomization.yaml
+        sed -i "$CADDRSUM""s/value:.*/value: '${{ inputs.featurenet_addresses_checksum }}'/" kustomization.yaml
         CCOMMSHA=$(grep -n "name: CONTRACTS_COMMIT_SHA" kustomization.yaml | cut -d: -f1);
         CCOMMSHA=$((CCOMMSHA+1));
-        sed "$CCOMMSHA""s/value:.*/value: '${{ inputs.featurenet_commit_sha }}'/" kustomization.yaml
+        sed -i "$CCOMMSHA""s/value:.*/value: '${{ inputs.featurenet_commit_sha }}'/" kustomization.yaml
 
     - name: KUSTOMIZE | Update squid database
       if: ${{ inputs.registry == 'squid-processor' }}
@@ -71,10 +71,10 @@ runs:
         cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
         CADDRSUM=$(grep -n "name: CONTRACTS_ADDRESSES_CHECKSUM" kustomization.yaml | cut -d: -f1);
         CADDRSUM=$((CADDRSUM+1));
-        sed "$CADDRSUM""s/value:.*/value: '${{ inputs.featurenet_addresses_checksum }}'/" kustomization.yaml
+        sed -i "$CADDRSUM""s/value:.*/value: '${{ inputs.featurenet_addresses_checksum }}'/" kustomization.yaml
         CCOMMSHA=$(grep -n "name: CONTRACTS_COMMIT_SHA" kustomization.yaml | cut -d: -f1);
         CCOMMSHA=$((CCOMMSHA+1));
-        sed "$CCOMMSHA""s/value:.*/value: '${{ inputs.featurenet_commit_sha }}'/" kustomization.yaml
+        sed -i "$CCOMMSHA""s/value:.*/value: '${{ inputs.featurenet_commit_sha }}'/" kustomization.yaml
 
     - name: KUSTOMIZE | Update docker image tag for squid
       shell: bash
