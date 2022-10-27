@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - '*.md'
     branches:
-      - main
+      - master
 
 jobs:
   build_and_push_processor:
