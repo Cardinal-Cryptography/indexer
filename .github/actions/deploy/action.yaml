@@ -109,10 +109,11 @@ runs:
         version: 'v1.23.6'
 
     - name: KUBECTL | Destroy archive and squid apps
+      if: ${{ inputs.registry == 'squid-processor' }}
       shell: bash
       run: |
         aws eks --region eu-central-1 update-kubeconfig --name alephzero-devnet-eu-central-1-eks
         kubectl delete -n indexer-squid --ignore-not-found=true deploy squid-api
         kubectl delete -n indexer-squid --ignore-not-found=true deploy squid-processor
-        kubectl delete -n indexer-archive --ignore-not-found=true deploy indexer-gateway
-        kubectl delete -n indexer-archive --ignore-not-found=true deploy indexer-ingest
+        kubectl delete -n indexer-archive --ignore-not-found=true deploy archive-gateway
+        kubectl delete -n indexer-archive --ignore-not-found=true deploy archive-ingest
