@@ -87,3 +87,64 @@ runs:
         add: '*.yaml'
         cwd: 'aleph-apps'
         branch: main
+
+    - name: AWS | Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ inputs.aws_devnet_access_key_id }}
+        aws-secret-access-key: ${{ inputs.aws_devnet_secret_access_key }}
+        aws-region: eu-central-1
+
+    - name: KUBECTL | Setup kubectl
+      uses: azure/setup-kubectl@v2.0
+      with:
+        version: 'v1.23.6'
+
+    - name: KUBECTL | Destroy archive and squid apps
+      if: ${{ inputs.registry == 'squid-processor' }}
+      shell: bash
+      run: |
+        aws eks --region eu-central-1 update-kubeconfig --name alephzero-devnet-eu-central-1-eks
+        kubectl delete -n indexer-squid --ignore-not-found=true deploy squid-api
+        kubectl delete -n indexer-squid --ignore-not-found=true deploy squid-processor
+        kubectl delete -n indexer-archive --ignore-not-found=true deploy archive-gateway
+        kubectl delete -n indexer-archive --ignore-not-found=true deploy archive-ingest
+
+    - name: KUBECTL | Create archive db and archive apps
+      if: ${{ inputs.registry == 'squid-processor' }}
+      shell: bash
+      run: |
+        cd aleph-apps/indexer/archive/overlays/devnet/eu-central-1
+        kustomize build . | kubectl apply -f -
+        sleep 3
+        kubectl rollout status --watch --timeout=600s -n indexer-archive statefulset/archive-db
+        kubectl rollout status --watch --timeout=600s -n indexer-archive deploy/archive-ingest
+        kubectl rollout status --watch --timeout=600s -n indexer-archive deploy/archive-gateway
+
+    - name: KUBECTL | Create squid db and squid processor
+      if: ${{ inputs.registry == 'squid-processor' }}
+      shell: bash
+      run: |
+        cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
+        kustomize build . | kubectl apply -f -
+        sleep 3
+        kubectl rollout status --watch --timeout=600s -n indexer-squid statefulset/squid-db
+        kubectl rollout status --watch --timeout=600s -n indexer-squid deploy/squid-processor
+        kubectl rollout status --watch --timeout=600s -n indexer-squid deploy/squid-api
+
+    - name: KUBECTL | Destroy squid api
+      if: ${{ inputs.registry == 'squid-api' }}
+      shell: bash
+      run: |
+        aws eks --region eu-central-1 update-kubeconfig --name alephzero-devnet-eu-central-1-eks
+        kubectl delete -n indexer-squid --ignore-not-found=true deploy squid-api
+
+    - name: KUBECTL | Create squid api
+      if: ${{ inputs.registry == 'squid-api' }}
+      shell: bash
+      run: |
+        cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
+        kustomize build . | kubectl apply -f -
+        sleep 3
+        kubectl rollout status --watch --timeout=600s -n indexer-squid deploy/squid-api
+
