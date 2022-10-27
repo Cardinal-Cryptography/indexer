@@ -118,7 +118,7 @@ runs:
         kubectl delete -n indexer-archive --ignore-not-found=true deploy archive-gateway
         kubectl delete -n indexer-archive --ignore-not-found=true deploy archive-ingest
 
-    - name: KUBECTL | Restart archive db and archive apps
+    - name: KUBECTL | Create archive db and archive apps
       if: ${{ inputs.registry == 'squid-processor' }}
       shell: bash
       run: |
@@ -128,3 +128,30 @@ runs:
         kubectl rollout status --watch --timeout=600s -n indexer-archive statefulset/archive-db
         kubectl rollout status --watch --timeout=600s -n indexer-archive deploy/archive-ingest
         kubectl rollout status --watch --timeout=600s -n indexer-archive deploy/archive-gateway
+
+    - name: KUBECTL | Create squid db and squid processor
+      if: ${{ inputs.registry == 'squid-processor' }}
+      shell: bash
+      run: |
+        cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
+        kustomize build . | kubectl apply -f -
+        sleep 3
+        kubectl rollout status --watch --timeout=600s -n indexer-squid statefulset/squid-db
+        kubectl rollout status --watch --timeout=600s -n indexer-squid deploy/squid-processor
+        kubectl rollout status --watch --timeout=600s -n indexer-squid deploy/squid-api
+
+    - name: KUBECTL | Destroy squid api
+      if: ${{ inputs.registry == 'squid-api' }}
+      shell: bash
+      run: |
+        aws eks --region eu-central-1 update-kubeconfig --name alephzero-devnet-eu-central-1-eks
+        kubectl delete -n indexer-squid --ignore-not-found=true deploy squid-api
+
+    - name: KUBECTL | Create squid api
+      if: ${{ inputs.registry == 'squid-api' }}
+      shell: bash
+      run: |
+        cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
+        kustomize build . | kubectl apply -f -
+        sleep 3
+        kubectl rollout status --watch --timeout=600s -n indexer-squid deploy/squid-api

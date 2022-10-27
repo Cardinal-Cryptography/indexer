@@ -68,7 +68,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: DEVNET | Deploy squid-process image to devnet
-        uses: ./.github/actions/deploy
+        uses: ./.github/actions/deploy-to-devnet
         with:
           registry: squid-processor
           image_tag: ${{ needs.build_and_push_processor.outputs.image_tag }}
@@ -88,7 +88,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: DEVNET | Deploy squid-api image to devnet
-        uses: ./.github/actions/deploy
+        uses: ./.github/actions/deploy-to-devnet
         with:
           registry: squid-api
           image_tag: ${{ needs.build_and_push_api.outputs.image_tag }}
