@@ -47,6 +47,21 @@ services:
     ports:
       - "${GATEWAY_HOST}:${GATEWAY_PORT}:8000"
 
+  # localhost:9000
+  # Explorer service.
+  # It provides rich GraphQL API for querying archived data
+  archive-explorer:
+    image: subsquid/substrate-explorer:firesquid
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: archive-db
+      DB_PORT: "5432"
+      DB_NAME: "squid-archive"
+      DB_USER: "postgres"
+      DB_PASS: "postgres"
+    ports:
+      - "4444:9000"
+
 networks:
   default:
     external:
