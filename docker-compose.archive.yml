@@ -52,6 +52,8 @@ services:
   # It provides rich GraphQL API for querying archived data
   archive-explorer:
     image: subsquid/substrate-explorer:firesquid
+    depends_on:
+      - archive-db
     environment:
       DB_TYPE: postgres
       DB_HOST: archive-db
