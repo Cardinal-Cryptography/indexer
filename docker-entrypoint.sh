@@ -11,3 +11,4 @@ if [[ "${INDEXER_ENV}" == "featurenet" ]]; then
 fi
 
 exec "$@"
+
