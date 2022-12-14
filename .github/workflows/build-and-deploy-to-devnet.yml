@@ -8,6 +8,7 @@ on:
       - '*.md'
     branches:
       - master
+      - A0-1459-add-docker-entrypoint-for-featurenet
 
 jobs:
   build_and_push_processor:
@@ -58,42 +59,43 @@ jobs:
       featurenet_addresses_checksum: ${{ steps.build_api.outputs.featurenet_addresses_checksum }}
       featurenet_commit_sha: ${{ steps.build_api.outputs.featurenet_commit_sha }}
 
-  deploy_processor:
-    name: Deploy Processor
-    needs: build_and_push_processor
-    runs-on: ubuntu-20.04
-    steps:
-      - name: GIT | Checkout
-        uses: actions/checkout@v2
-
-      - name: DEVNET | Deploy squid-process image to devnet
-        uses: ./.github/actions/deploy-to-devnet
-        with:
-          registry: squid-processor
-          image_tag: ${{ needs.build_and_push_processor.outputs.image_tag }}
-          featurenet_addresses_checksum: ${{ needs.build_and_push_processor.outputs.featurenet_addresses_checksum }}
-          featurenet_commit_sha: ${{ needs.build_and_push_processor.outputs.featurenet_commit_sha }}
-          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
-          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
-          github_token: ${{ secrets.CI_GH_TOKEN }}
-          ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
-  
-  deploy_api:
-    name: Deploy API
-    needs: [build_and_push_api, deploy_processor]
-    runs-on: ubuntu-20.04
-    steps:
-      - name: GIT | Checkout
-        uses: actions/checkout@v2
-
-      - name: DEVNET | Deploy squid-api image to devnet
-        uses: ./.github/actions/deploy-to-devnet
-        with:
-          registry: squid-api
-          image_tag: ${{ needs.build_and_push_api.outputs.image_tag }}
-          featurenet_addresses_checksum: ${{ needs.build_and_push_api.outputs.featurenet_addresses_checksum }}
-          featurenet_commit_sha: ${{ needs.build_and_push_api.outputs.featurenet_commit_sha }}
-          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
-          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
-          github_token: ${{ secrets.CI_GH_TOKEN }}
-          ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
+#  deploy_processor:
+#    name: Deploy Processor
+#    needs: build_and_push_processor
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: GIT | Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: DEVNET | Deploy squid-process image to devnet
+#        uses: ./.github/actions/deploy-to-devnet
+#        with:
+#          registry: squid-processor
+#          image_tag: ${{ needs.build_and_push_processor.outputs.image_tag }}
+#          featurenet_addresses_checksum: ${{ needs.build_and_push_processor.outputs.featurenet_addresses_checksum }}
+#          featurenet_commit_sha: ${{ needs.build_and_push_processor.outputs.featurenet_commit_sha }}
+#          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
+#          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+#          github_token: ${{ secrets.CI_GH_TOKEN }}
+#          ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
+#  
+#  deploy_api:
+#    name: Deploy API
+#    needs: [build_and_push_api, deploy_processor]
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: GIT | Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: DEVNET | Deploy squid-api image to devnet
+#        uses: ./.github/actions/deploy-to-devnet
+#        with:
+#          registry: squid-api
+#          image_tag: ${{ needs.build_and_push_api.outputs.image_tag }}
+#          featurenet_addresses_checksum: ${{ needs.build_and_push_api.outputs.featurenet_addresses_checksum }}
+#          featurenet_commit_sha: ${{ needs.build_and_push_api.outputs.featurenet_commit_sha }}
+#          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
+#          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+#          github_token: ${{ secrets.CI_GH_TOKEN }}
+#          ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
+#
