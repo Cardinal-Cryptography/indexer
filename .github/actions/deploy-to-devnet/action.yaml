@@ -7,17 +7,9 @@ inputs:
   image_tag:
     description: Tag of the docker image to be deployed
     required: true
-  featurenet_addresses_checksum: 
-    description: Checksum of addresses.json file from featurenet
-    required: true
-  featurenet_commit_sha:
-    description: SHA of commit from featurenet that addreses were built from
-    required: true
   aws_devnet_access_key_id:
     required: true
   aws_devnet_secret_access_key:
-    required: true
-  ci_s3bucket_name:
     required: true
   github_token:
     required: true
@@ -51,22 +43,6 @@ runs:
       uses: imranismail/setup-kustomize@v1
       with:
         kustomize-version: '3.8.6'
-
-    - name: SED | Update archive database and apps
-      if: ${{ inputs.registry == 'squid-processor' }}
-      shell: bash
-      run: |
-        cd aleph-apps/indexer/archive/overlays/devnet/eu-central-1
-        sed -i 's/{[[:space:]]*name:[[:space:]]*CONTRACTS_ADDRESSES_CHECKSUM[[:space:]]*,[[:space:]]*value:.*}/{ name: CONTRACTS_ADDRESSES_CHECKSUM, value: "${{ inputs.featurenet_addresses_checksum }}" }/g' kustomization.yaml
-        sed -i 's/{[[:space:]]*name:[[:space:]]*CONTRACTS_COMMIT_SHA[[:space:]]*,[[:space:]]*value:.*}/{ name: CONTRACTS_COMMIT_SHA, value: "${{ inputs.featurenet_commit_sha }}" }/g' kustomization.yaml
-
-    - name: SED | Update squid database and apps
-      if: ${{ inputs.registry == 'squid-processor' }}
-      shell: bash
-      run: |
-        cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
-        sed -i 's/{[[:space:]]*name:[[:space:]]*CONTRACTS_ADDRESSES_CHECKSUM[[:space:]]*,[[:space:]]*value:.*}/{ name: CONTRACTS_ADDRESSES_CHECKSUM, value: "${{ inputs.featurenet_addresses_checksum }}" }/g' kustomization.yaml
-        sed -i 's/{[[:space:]]*name:[[:space:]]*CONTRACTS_COMMIT_SHA[[:space:]]*,[[:space:]]*value:.*}/{ name: CONTRACTS_COMMIT_SHA, value: "${{ inputs.featurenet_commit_sha }}" }/g' kustomization.yaml
 
     - name: KUSTOMIZE | Update docker image tag for squid
       shell: bash
