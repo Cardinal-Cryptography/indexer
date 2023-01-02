@@ -25,8 +25,8 @@ jobs:
           target: processor
           aws_mainnet_access_key_id: ${{ secrets.AWS_MAINNET_ACCESS_KEY_ID }}
           aws_mainnet_secret_access_key: ${{ secrets.AWS_MAINNET_SECRET_ACCESS_KEY }}
-          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
-          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_TESTUSR_ACCESS_KEY_ID }}
+          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_TESTUSR_SECRET_ACCESS_KEY }}
     outputs:
       image_tag: ${{ steps.build_processor.outputs.image_tag }}
       featurenet_addresses_checksum: ${{ steps.build_processor.outputs.featurenet_addresses_checksum }}
@@ -47,8 +47,8 @@ jobs:
           target: query-node
           aws_mainnet_access_key_id: ${{ secrets.AWS_MAINNET_ACCESS_KEY_ID }}
           aws_mainnet_secret_access_key: ${{ secrets.AWS_MAINNET_SECRET_ACCESS_KEY }}
-          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
-          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_TESTUSR_ACCESS_KEY_ID }}
+          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_TESTUSR_SECRET_ACCESS_KEY }}
     outputs:
       image_tag: ${{ steps.build_api.outputs.image_tag }}
       featurenet_addresses_checksum: ${{ steps.build_api.outputs.featurenet_addresses_checksum }}
@@ -69,8 +69,8 @@ jobs:
           image_tag: ${{ needs.build_and_push_processor.outputs.image_tag }}
           featurenet_addresses_checksum: ${{ needs.build_and_push_processor.outputs.featurenet_addresses_checksum }}
           featurenet_commit_sha: ${{ needs.build_and_push_processor.outputs.featurenet_commit_sha }}
-          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
-          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_TESTUSR_ACCESS_KEY_ID }}
+          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_TESTUSR_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}
           ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
   
@@ -89,7 +89,7 @@ jobs:
           image_tag: ${{ needs.build_and_push_api.outputs.image_tag }}
           featurenet_addresses_checksum: ${{ needs.build_and_push_api.outputs.featurenet_addresses_checksum }}
           featurenet_commit_sha: ${{ needs.build_and_push_api.outputs.featurenet_commit_sha }}
-          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
-          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
+          aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_TESTUSR_ACCESS_KEY_ID }}
+          aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_TESTUSR_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}
           ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
