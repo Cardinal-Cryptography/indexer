@@ -8,7 +8,6 @@ on:
       - '*.md'
     branches:
       - master
-      - A0-1459-remove-kubectl-commands
 
 jobs:
   build_and_push_processor:
