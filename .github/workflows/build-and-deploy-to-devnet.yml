@@ -8,6 +8,7 @@ on:
       - '*.md'
     branches:
       - master
+      - A0-1459-remove-kubectl-commands
 
 jobs:
   build_and_push_processor:
@@ -29,8 +30,6 @@ jobs:
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
     outputs:
       image_tag: ${{ steps.build_processor.outputs.image_tag }}
-      featurenet_addresses_checksum: ${{ steps.build_processor.outputs.featurenet_addresses_checksum }}
-      featurenet_commit_sha: ${{ steps.build_processor.outputs.featurenet_commit_sha }}
 
   build_and_push_api:
     name: Build and push API
@@ -51,8 +50,6 @@ jobs:
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
     outputs:
       image_tag: ${{ steps.build_api.outputs.image_tag }}
-      featurenet_addresses_checksum: ${{ steps.build_api.outputs.featurenet_addresses_checksum }}
-      featurenet_commit_sha: ${{ steps.build_api.outputs.featurenet_commit_sha }}
 
   deploy_processor:
     name: Deploy Processor
@@ -67,12 +64,9 @@ jobs:
         with:
           registry: squid-processor
           image_tag: ${{ needs.build_and_push_processor.outputs.image_tag }}
-          featurenet_addresses_checksum: ${{ needs.build_and_push_processor.outputs.featurenet_addresses_checksum }}
-          featurenet_commit_sha: ${{ needs.build_and_push_processor.outputs.featurenet_commit_sha }}
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}
-          ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
   
   deploy_api:
     name: Deploy API
@@ -87,9 +81,6 @@ jobs:
         with:
           registry: squid-api
           image_tag: ${{ needs.build_and_push_api.outputs.image_tag }}
-          featurenet_addresses_checksum: ${{ needs.build_and_push_api.outputs.featurenet_addresses_checksum }}
-          featurenet_commit_sha: ${{ needs.build_and_push_api.outputs.featurenet_commit_sha }}
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}
-          ci_s3bucket_name: ${{ secrets.CI_S3BUCKET_NAME }}
