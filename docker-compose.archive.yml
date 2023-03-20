@@ -52,6 +52,7 @@ services:
   # It provides rich GraphQL API for querying archived data
   archive-explorer:
     image: subsquid/substrate-explorer:firesquid
+    container_name: archive-explorer
     depends_on:
       - archive-db
     environment:
