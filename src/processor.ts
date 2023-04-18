@@ -37,28 +37,28 @@ const processor = new SubstrateBatchProcessor()
 type Item = BatchProcessorItem<typeof processor>
 type Ctx = BatchContext<Store, Item>
 
-interface ButtonPressEvent {
+interface RewardMintedEvent {
     game: string
-    by: string
     when: number
-    score: bigint
+    to: string
+    amount: bigint
 }
 
-function extractPressEvents(ctx: Ctx): ButtonPressEvent[] {
-    const events: ButtonPressEvent[] = []
+function extractPressEvents(ctx: Ctx): RewardMintedEvent[] {
+    const events: RewardMintedEvent[] = []
     for (const block of ctx.blocks) {
         for (const item of block.items)        {
             if (item.name === 'Contracts.ContractEmitted'
                 && [EARLY_BIRD_SPECIAL, BACK_TO_THE_FUTURE, THE_PRESSIAH_COMETH].includes(item.event.args.contract)) {
 
                 const event = button.decodeEvent(item.event.args.data)
-                if (event.__kind === 'ButtonPressed') {
+                if (event.__kind === 'RewardMinted') {
                     ctx.log.debug(event, 'decoded button press event')
                     events.push({
                         game: encodeAddress(item.event.args.contract),
-                        by: encodeAddress (event.by),
+                        to: encodeAddress (event.to),
                         when: event.when,
-                        score: event.score
+                        amount: event.amount
                     })
 
                 }
@@ -77,7 +77,7 @@ processor.run(new TypeormDatabase(), async ctx => {
 
     var accountIds = new Set<string>()
     events.forEach(event => {
-        accountIds.add (event.by)
+        accountIds.add (event.to)
     })
 
     console.log(accountIds, 'processing events for accounts')
@@ -100,7 +100,7 @@ processor.run(new TypeormDatabase(), async ctx => {
     events.forEach(async event => {
 
         ctx.log.info(event, 'processing an event')
-        var accountId = event.by
+        var accountId = event.to
 
         var userScores = scoresMap.get (accountId)
         if (userScores == null) {
@@ -126,7 +126,7 @@ processor.run(new TypeormDatabase(), async ctx => {
                 }
 
                 game_score.lastClickedInBlock = event.when
-                game_score.totalRewards += event.score
+                game_score.totalRewards += event.amount
                 game_score.pressCount += 1
 
                 userScores.earlyBirdSpecialScore = game_score
@@ -146,7 +146,7 @@ processor.run(new TypeormDatabase(), async ctx => {
                 }
 
                 game_score.lastClickedInBlock = event.when
-                game_score.totalRewards += event.score
+                game_score.totalRewards += event.amount
                 game_score.pressCount += 1
 
                 userScores.backToTheFutureScore = game_score
@@ -166,7 +166,7 @@ processor.run(new TypeormDatabase(), async ctx => {
                 }
 
                 game_score.lastClickedInBlock = event.when
-                game_score.totalRewards += event.score
+                game_score.totalRewards += event.amount
                 game_score.pressCount += 1
 
                 userScores.thePressiahComethScore = game_score
