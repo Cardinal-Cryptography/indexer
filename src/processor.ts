@@ -13,6 +13,8 @@ const EARLY_BIRD_SPECIAL = account2hex(addresses.early_bird_special)
 const BACK_TO_THE_FUTURE = account2hex(addresses.back_to_the_future)
 const THE_PRESSIAH_COMETH = account2hex(addresses.the_pressiah_cometh)
 
+var onBoot = true;
+
 const processor = new SubstrateBatchProcessor()
     .setBatchSize(1000)
     .setDataSource({
@@ -37,28 +39,28 @@ const processor = new SubstrateBatchProcessor()
 type Item = BatchProcessorItem<typeof processor>
 type Ctx = BatchContext<Store, Item>
 
-interface ButtonPressEvent {
+interface RewardMintedEvent {
     game: string
-    by: string
     when: number
-    score: bigint
+    to: string
+    amount: bigint
 }
 
-function extractPressEvents(ctx: Ctx): ButtonPressEvent[] {
-    const events: ButtonPressEvent[] = []
+function extractPressEvents(ctx: Ctx): RewardMintedEvent[] {
+    const events: RewardMintedEvent[] = []
     for (const block of ctx.blocks) {
         for (const item of block.items)        {
             if (item.name === 'Contracts.ContractEmitted'
                 && [EARLY_BIRD_SPECIAL, BACK_TO_THE_FUTURE, THE_PRESSIAH_COMETH].includes(item.event.args.contract)) {
 
                 const event = button.decodeEvent(item.event.args.data)
-                if (event.__kind === 'ButtonPressed') {
+                if (event.__kind === 'RewardMinted') {
                     ctx.log.debug(event, 'decoded button press event')
                     events.push({
                         game: encodeAddress(item.event.args.contract),
-                        by: encodeAddress (event.by),
+                        to: encodeAddress (event.to),
                         when: event.when,
-                        score: event.score
+                        amount: event.amount
                     })
 
                 }
@@ -71,143 +73,150 @@ function extractPressEvents(ctx: Ctx): ButtonPressEvent[] {
 }
 
 processor.run(new TypeormDatabase(), async ctx => {
-    console.log(addresses, 'processor will listen to the events from addresses')
+
+    if (onBoot) {
+        ctx.log.info(addresses, 'processor listens to the events from addresses' )
+        onBoot = false;
+    }
 
     const events = extractPressEvents(ctx)
 
-    var accountIds = new Set<string>()
-    events.forEach(event => {
-        accountIds.add (event.by)
-    })
+    if (!(events.length === 0)) {
 
-    console.log(accountIds, 'processing events for accounts')
+        var accountIds = new Set<string>()
+        events.forEach(event => {
+            accountIds.add (event.to)
+        })
 
-    var scoresMap = await ctx.store.find(Scores, {
-        where: {
-            id: In([...accountIds])
-        },
-        relations: {
-            earlyBirdSpecialScore: true,
-            backToTheFutureScore: true,
-            thePressiahComethScore: true
-        }
-    }).then(scores => {
-        return new Map(scores.map(userScores => [userScores.id, userScores]))
-    })
+        ctx.log.info(accountIds, 'processing events for accounts')
 
-    console.log(scoresMap, 'found previously persisted scores')
+        var scoresMap = await ctx.store.find(Scores, {
+            where: {
+                id: In([...accountIds])
+            },
+            relations: {
+                earlyBirdSpecialScore: true,
+                backToTheFutureScore: true,
+                thePressiahComethScore: true
+            }
+        }).then(scores => {
+            return new Map(scores.map(userScores => [userScores.id, userScores]))
+        })
 
-    events.forEach(async event => {
+        ctx.log.info(scoresMap, 'found previously persisted scores')
 
-        ctx.log.info(event, 'processing an event')
-        var accountId = event.by
+        events.forEach(async event => {
 
-        var userScores = scoresMap.get (accountId)
-        if (userScores == null) {
-            userScores = new Scores ({
-                id: accountId
-            })
-        }
+            ctx.log.info(event, 'processing an event')
+            var accountId = event.to
 
-        ctx.log.info(userScores, 'updating user scores')
+            var userScores = scoresMap.get (accountId)
+            if (userScores == null) {
+                userScores = new Scores ({
+                    id: accountId
+                })
+            }
 
-        //  set game scores switching at event.game
-        switch (event.game) {
-            case addresses.early_bird_special:
+            ctx.log.info(userScores, 'updating user scores')
 
-                var game_score = userScores.earlyBirdSpecialScore
-                if (game_score == null) {
-                    game_score = new EarlyBirdSpecialScore ({
-                        id: accountId,
-                        lastClickedInBlock: 0,
-                        pressCount: 0,
-                        totalRewards: 0n
-                    })
-                }
+            //  set game scores switching at event.game
+            switch (event.game) {
+                case addresses.early_bird_special:
 
-                game_score.lastClickedInBlock = event.when
-                game_score.totalRewards += event.score
-                game_score.pressCount += 1
+                    var game_score = userScores.earlyBirdSpecialScore
+                    if (game_score == null) {
+                        game_score = new EarlyBirdSpecialScore ({
+                            id: accountId,
+                            lastClickedInBlock: 0,
+                            pressCount: 0,
+                            totalRewards: 0n
+                        })
+                    }
 
-                userScores.earlyBirdSpecialScore = game_score
-                ctx.log.debug(game_score, 'updated EarlyBirdSpecial game score')
-                break;
+                    game_score.lastClickedInBlock = event.when
+                    game_score.totalRewards += event.amount
+                    game_score.pressCount += 1
 
-            case addresses.back_to_the_future:
+                    userScores.earlyBirdSpecialScore = game_score
+                    ctx.log.debug(game_score, 'updated EarlyBirdSpecial game score')
+                    break;
 
-                var game_score = userScores.backToTheFutureScore
-                if (game_score == null) {
-                    game_score = new BackToTheFutureScore ({
-                        id: accountId,
-                        lastClickedInBlock: 0,
-                        pressCount: 0,
-                        totalRewards: 0n
-                    })
-                }
+                case addresses.back_to_the_future:
 
-                game_score.lastClickedInBlock = event.when
-                game_score.totalRewards += event.score
-                game_score.pressCount += 1
+                    var game_score = userScores.backToTheFutureScore
+                    if (game_score == null) {
+                        game_score = new BackToTheFutureScore ({
+                            id: accountId,
+                            lastClickedInBlock: 0,
+                            pressCount: 0,
+                            totalRewards: 0n
+                        })
+                    }
 
-                userScores.backToTheFutureScore = game_score
-                ctx.log.debug(game_score, 'updated BackToTheFuture game score')
-                break;
+                    game_score.lastClickedInBlock = event.when
+                    game_score.totalRewards += event.amount
+                    game_score.pressCount += 1
 
-            case addresses.the_pressiah_cometh:
+                    userScores.backToTheFutureScore = game_score
+                    ctx.log.debug(game_score, 'updated BackToTheFuture game score')
+                    break;
 
-                var game_score = userScores.thePressiahComethScore
-                if (game_score == null) {
-                    game_score = new ThePressiahComethScore ({
-                        id: accountId,
-                        lastClickedInBlock: 0,
-                        pressCount: 0,
-                        totalRewards: 0n
-                    })
-                }
+                case addresses.the_pressiah_cometh:
 
-                game_score.lastClickedInBlock = event.when
-                game_score.totalRewards += event.score
-                game_score.pressCount += 1
+                    var game_score = userScores.thePressiahComethScore
+                    if (game_score == null) {
+                        game_score = new ThePressiahComethScore ({
+                            id: accountId,
+                            lastClickedInBlock: 0,
+                            pressCount: 0,
+                            totalRewards: 0n
+                        })
+                    }
 
-                userScores.thePressiahComethScore = game_score
-                ctx.log.debug(game_score, 'updated ThePressiahCometh game score')
-                break;
+                    game_score.lastClickedInBlock = event.when
+                    game_score.totalRewards += event.amount
+                    game_score.pressCount += 1
 
-            default:
-                break;
-        }
+                    userScores.thePressiahComethScore = game_score
+                    ctx.log.debug(game_score, 'updated ThePressiahCometh game score')
+                    break;
 
-        scoresMap.set (accountId, userScores)
-    })
+                default:
+                    break;
+            }
 
-    var earlyBirdSpecialScores: EarlyBirdSpecialScore[] = []
-    var backToTheFutureScores: BackToTheFutureScore[] = []
-    var thePressiahComethScores: ThePressiahComethScore[] = []
+            scoresMap.set (accountId, userScores)
+        })
 
-    scoresMap.forEach(function(userScores, accountId) {
-        let earlyBirdSpecialScore = userScores.earlyBirdSpecialScore
-        if (earlyBirdSpecialScore != null) {
-            earlyBirdSpecialScores.push(earlyBirdSpecialScore)
-        }
+        var earlyBirdSpecialScores: EarlyBirdSpecialScore[] = []
+        var backToTheFutureScores: BackToTheFutureScore[] = []
+        var thePressiahComethScores: ThePressiahComethScore[] = []
 
-        let backToTheFutureScore = userScores.backToTheFutureScore
-        if (backToTheFutureScore != null) {
-            backToTheFutureScores.push (backToTheFutureScore)
-        }
+        scoresMap.forEach(function(userScores, accountId) {
+            let earlyBirdSpecialScore = userScores.earlyBirdSpecialScore
+            if (earlyBirdSpecialScore != null) {
+                earlyBirdSpecialScores.push(earlyBirdSpecialScore)
+            }
 
-        let thePressiahComethScore = userScores.thePressiahComethScore
-        if (thePressiahComethScore != null) {
-            thePressiahComethScores.push (thePressiahComethScore)
-        }
+            let backToTheFutureScore = userScores.backToTheFutureScore
+            if (backToTheFutureScore != null) {
+                backToTheFutureScores.push (backToTheFutureScore)
+            }
 
-    })
+            let thePressiahComethScore = userScores.thePressiahComethScore
+            if (thePressiahComethScore != null) {
+                thePressiahComethScores.push (thePressiahComethScore)
+            }
 
-    // persist
-    console.log(scoresMap, 'persisting updated scores')
-    await ctx.store.save(earlyBirdSpecialScores)
-    await ctx.store.save(backToTheFutureScores)
-    await ctx.store.save(thePressiahComethScores)
-    await ctx.store.save([...scoresMap.values()])
+        })
+
+        // persist
+        ctx.log.info(scoresMap, 'persisting updated scores')
+        await ctx.store.save(earlyBirdSpecialScores)
+        await ctx.store.save(backToTheFutureScores)
+        await ctx.store.save(thePressiahComethScores)
+        await ctx.store.save([...scoresMap.values()])
+    }
 })
 
 function account2hex(account: string) : string {
