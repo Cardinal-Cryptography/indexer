@@ -2,7 +2,7 @@ import {Abi, encodeCall, decodeResult} from "@subsquid/ink-abi"
 
 export const metadata = {
   "source": {
-    "hash": "0xb4706830babcc637e707c9939696341a900c7f077a63a57d14ea85700b6e9be6",
+    "hash": "0xe3968ed6e411e076fe30a5636e323cdb4aa5198231a023ca08cb711aaded11a5",
     "language": "ink! 4.0.1",
     "compiler": "rustc 1.66.0-nightly",
     "build_info": {
@@ -70,6 +70,24 @@ export const metadata = {
               ],
               "type": 7
             }
+          },
+          {
+            "label": "min_reward",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "label": "max_reward",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 4
+            }
           }
         ],
         "docs": [],
@@ -92,58 +110,6 @@ export const metadata = {
           {
             "docs": [],
             "indexed": true,
-            "label": "reward_token",
-            "type": {
-              "displayName": [
-                "AccountId"
-              ],
-              "type": 1
-            }
-          },
-          {
-            "docs": [],
-            "indexed": true,
-            "label": "ticket_token",
-            "type": {
-              "displayName": [
-                "AccountId"
-              ],
-              "type": 1
-            }
-          },
-          {
-            "docs": [],
-            "indexed": false,
-            "label": "start",
-            "type": {
-              "displayName": [
-                "BlockNumber"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "docs": [],
-            "indexed": false,
-            "label": "deadline",
-            "type": {
-              "displayName": [
-                "BlockNumber"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "docs": [
-          " Event emitted when TheButton is created"
-        ],
-        "label": "ButtonCreated"
-      },
-      {
-        "args": [
-          {
-            "docs": [],
-            "indexed": true,
             "label": "by",
             "type": {
               "displayName": [
@@ -155,12 +121,12 @@ export const metadata = {
           {
             "docs": [],
             "indexed": false,
-            "label": "when",
+            "label": "round",
             "type": {
               "displayName": [
-                "BlockNumber"
+                "u64"
               ],
-              "type": 0
+              "type": 5
             }
           },
           {
@@ -185,12 +151,12 @@ export const metadata = {
           {
             "docs": [],
             "indexed": false,
-            "label": "when",
+            "label": "round",
             "type": {
               "displayName": [
-                "BlockNumber"
+                "u64"
               ],
-              "type": 0
+              "type": 5
             }
           },
           {
@@ -206,7 +172,7 @@ export const metadata = {
           },
           {
             "docs": [],
-            "indexed": false,
+            "indexed": true,
             "label": "to",
             "type": {
               "displayName": [
@@ -218,7 +184,7 @@ export const metadata = {
           {
             "docs": [],
             "indexed": false,
-            "label": "amount",
+            "label": "reward",
             "type": {
               "displayName": [
                 "Balance"
@@ -238,20 +204,51 @@ export const metadata = {
         "args": [
           {
             "docs": [],
-            "indexed": false,
-            "label": "when",
+            "indexed": true,
+            "label": "pressiah",
             "type": {
               "displayName": [
-                "BlockNumber"
+                "AccountId"
               ],
-              "type": 0
+              "type": 1
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "reward",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [
+          " Event emitted when ThePressiah is found at the start of a new round",
+          " triggered by a `reset` tx"
+        ],
+        "label": "PressiahFound"
+      },
+      {
+        "args": [
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "by",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
             }
           }
         ],
         "docs": [
           " Event emitted when the finished game is reset and pressiah is rewarded"
         ],
-        "label": "GameReset"
+        "label": "ButtonReset"
       },
       {
         "args": [],
@@ -528,6 +525,64 @@ export const metadata = {
         "selector": "0xb98de9cc"
       },
       {
+        "args": [
+          {
+            "label": "min_reward",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [
+          " Sets button minimal reward to a new value",
+          "",
+          " Can only be called by the contract admin"
+        ],
+        "label": "set_min_reward",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0x48ad1d20"
+      },
+      {
+        "args": [
+          {
+            "label": "max_reward",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [
+          " Sets button maximal reward to a new value",
+          "",
+          " Can only be called by the contract admin"
+        ],
+        "label": "set_max_reward",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0x2a249829"
+      },
+      {
         "args": [],
         "docs": [
           " Terminates the contract",
@@ -765,6 +820,24 @@ export const metadata = {
                             }
                           },
                           "name": "round"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x44415441",
+                              "ty": 4
+                            }
+                          },
+                          "name": "min_reward"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x44415441",
+                              "ty": 4
+                            }
+                          },
+                          "name": "max_reward"
                         }
                       ],
                       "name": "Data"
@@ -1797,7 +1870,7 @@ export class Contract {
         return this.stateCall('0x1f48bede', [])
     }
 
-    round(): Promise<Result<bigint, LangError>> {
+    round(): Promise<Result<u64, LangError>> {
         return this.stateCall('0x11d6557e', [])
     }
 
@@ -1838,34 +1911,32 @@ export class Contract {
     }
 }
 
-export type Event = Event_ButtonCreated | Event_ButtonPressed | Event_RewardMinted | Event_GameReset | Event_Halted | Event_Resumed
-
-export interface Event_ButtonCreated {
-    __kind: 'ButtonCreated'
-    rewardToken: AccountId
-    ticketToken: AccountId
-    start: BlockNumber
-    deadline: BlockNumber
-}
+export type Event = Event_ButtonPressed | Event_RewardMinted | Event_PressiahFound | Event_ButtonReset | Event_Halted | Event_Resumed
 
 export interface Event_ButtonPressed {
     __kind: 'ButtonPressed'
     by: AccountId
-    when: BlockNumber
+    round: u64
     score: Balance
 }
 
 export interface Event_RewardMinted {
     __kind: 'RewardMinted'
-    when: BlockNumber
+    round: u64
     rewardToken: AccountId
     to: AccountId
-    amount: Balance
+    reward: Balance
 }
 
-export interface Event_GameReset {
-    __kind: 'GameReset'
-    when: BlockNumber
+export interface Event_PressiahFound {
+    __kind: 'PressiahFound'
+    pressiah: AccountId
+    reward: Balance
+}
+
+export interface Event_ButtonReset {
+    __kind: 'ButtonReset'
+    by: AccountId
 }
 
 export interface Event_Halted {
@@ -1876,7 +1947,7 @@ export interface Event_Resumed {
     __kind: 'Resumed'
 }
 
-export type Message = Message_deadline | Message_round | Message_is_dead | Message_last_presser | Message_access_control | Message_reward_token | Message_ticket_token | Message_marketplace | Message_code_hash | Message_press | Message_reset | Message_set_access_control | Message_set_button_lifetime | Message_terminate | Message_set_code
+export type Message = Message_deadline | Message_round | Message_is_dead | Message_last_presser | Message_access_control | Message_reward_token | Message_ticket_token | Message_marketplace | Message_code_hash | Message_press | Message_reset | Message_set_access_control | Message_set_button_lifetime | Message_set_min_reward | Message_set_max_reward | Message_terminate | Message_set_code
 
 /**
  *  Returns the current deadline
@@ -1986,6 +2057,26 @@ export interface Message_set_button_lifetime {
 }
 
 /**
+ *  Sets button minimal reward to a new value
+ * 
+ *  Can only be called by the contract admin
+ */
+export interface Message_set_min_reward {
+    __kind: 'set_min_reward'
+    minReward: Balance
+}
+
+/**
+ *  Sets button maximal reward to a new value
+ * 
+ *  Can only be called by the contract admin
+ */
+export interface Message_set_max_reward {
+    __kind: 'set_max_reward'
+    maxReward: Balance
+}
+
+/**
  *  Terminates the contract
  * 
  *  Should only be called by the contract Admin
@@ -2012,6 +2103,8 @@ export interface Constructor_new {
     marketplace: AccountId
     buttonLifetime: BlockNumber
     scoring: Scoring
+    minReward: Balance
+    maxReward: Balance
 }
 
 export type BlockNumber = number
@@ -2021,6 +2114,8 @@ export type LangError = LangError_CouldNotReadInput
 export interface LangError_CouldNotReadInput {
     __kind: 'CouldNotReadInput'
 }
+
+export type u64 = bigint
 
 export type AccountId = Uint8Array
 

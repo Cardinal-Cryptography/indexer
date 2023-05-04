@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0xb4706830babcc637e707c9939696341a900c7f077a63a57d14ea85700b6e9be6",
+    "hash": "0xe3968ed6e411e076fe30a5636e323cdb4aa5198231a023ca08cb711aaded11a5",
     "language": "ink! 4.0.1",
     "compiler": "rustc 1.66.0-nightly",
     "build_info": {
@@ -68,6 +68,24 @@
               ],
               "type": 7
             }
+          },
+          {
+            "label": "min_reward",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "label": "max_reward",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 4
+            }
           }
         ],
         "docs": [],
@@ -90,58 +108,6 @@
           {
             "docs": [],
             "indexed": true,
-            "label": "reward_token",
-            "type": {
-              "displayName": [
-                "AccountId"
-              ],
-              "type": 1
-            }
-          },
-          {
-            "docs": [],
-            "indexed": true,
-            "label": "ticket_token",
-            "type": {
-              "displayName": [
-                "AccountId"
-              ],
-              "type": 1
-            }
-          },
-          {
-            "docs": [],
-            "indexed": false,
-            "label": "start",
-            "type": {
-              "displayName": [
-                "BlockNumber"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "docs": [],
-            "indexed": false,
-            "label": "deadline",
-            "type": {
-              "displayName": [
-                "BlockNumber"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "docs": [
-          " Event emitted when TheButton is created"
-        ],
-        "label": "ButtonCreated"
-      },
-      {
-        "args": [
-          {
-            "docs": [],
-            "indexed": true,
             "label": "by",
             "type": {
               "displayName": [
@@ -153,12 +119,12 @@
           {
             "docs": [],
             "indexed": false,
-            "label": "when",
+            "label": "round",
             "type": {
               "displayName": [
-                "BlockNumber"
+                "u64"
               ],
-              "type": 0
+              "type": 5
             }
           },
           {
@@ -183,12 +149,12 @@
           {
             "docs": [],
             "indexed": false,
-            "label": "when",
+            "label": "round",
             "type": {
               "displayName": [
-                "BlockNumber"
+                "u64"
               ],
-              "type": 0
+              "type": 5
             }
           },
           {
@@ -204,7 +170,7 @@
           },
           {
             "docs": [],
-            "indexed": false,
+            "indexed": true,
             "label": "to",
             "type": {
               "displayName": [
@@ -216,7 +182,7 @@
           {
             "docs": [],
             "indexed": false,
-            "label": "amount",
+            "label": "reward",
             "type": {
               "displayName": [
                 "Balance"
@@ -236,20 +202,51 @@
         "args": [
           {
             "docs": [],
-            "indexed": false,
-            "label": "when",
+            "indexed": true,
+            "label": "pressiah",
             "type": {
               "displayName": [
-                "BlockNumber"
+                "AccountId"
               ],
-              "type": 0
+              "type": 1
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "reward",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [
+          " Event emitted when ThePressiah is found at the start of a new round",
+          " triggered by a `reset` tx"
+        ],
+        "label": "PressiahFound"
+      },
+      {
+        "args": [
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "by",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
             }
           }
         ],
         "docs": [
           " Event emitted when the finished game is reset and pressiah is rewarded"
         ],
-        "label": "GameReset"
+        "label": "ButtonReset"
       },
       {
         "args": [],
@@ -526,6 +523,64 @@
         "selector": "0xb98de9cc"
       },
       {
+        "args": [
+          {
+            "label": "min_reward",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [
+          " Sets button minimal reward to a new value",
+          "",
+          " Can only be called by the contract admin"
+        ],
+        "label": "set_min_reward",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0x48ad1d20"
+      },
+      {
+        "args": [
+          {
+            "label": "max_reward",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [
+          " Sets button maximal reward to a new value",
+          "",
+          " Can only be called by the contract admin"
+        ],
+        "label": "set_max_reward",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0x2a249829"
+      },
+      {
         "args": [],
         "docs": [
           " Terminates the contract",
@@ -763,6 +818,24 @@
                             }
                           },
                           "name": "round"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x44415441",
+                              "ty": 4
+                            }
+                          },
+                          "name": "min_reward"
+                        },
+                        {
+                          "layout": {
+                            "leaf": {
+                              "key": "0x44415441",
+                              "ty": 4
+                            }
+                          },
+                          "name": "max_reward"
                         }
                       ],
                       "name": "Data"
