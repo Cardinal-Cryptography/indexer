@@ -48,8 +48,8 @@ interface RewardMintedEvent {
 
 function extractPressEvents(ctx: Ctx): RewardMintedEvent[] {
     const events: RewardMintedEvent[] = []
-    for (const block of ctx.blocks) {
-        for (const item of block.items)        {
+    for (const {header: block, items} of ctx.blocks) {
+        for (const item of items)        {
             if (item.name === 'Contracts.ContractEmitted'
                 && [EARLY_BIRD_SPECIAL, BACK_TO_THE_FUTURE, THE_PRESSIAH_COMETH].includes(item.event.args.contract)) {
 
@@ -59,8 +59,8 @@ function extractPressEvents(ctx: Ctx): RewardMintedEvent[] {
                     events.push({
                         game: encodeAddress(item.event.args.contract),
                         to: encodeAddress (event.to),
-                        when: event.when,
-                        amount: event.amount
+                        when: block.height,
+                        amount: event.reward
                     })
 
                 }
