@@ -2,16 +2,16 @@ type EarlyBirdSpecialScore @entity {
  "Account id"
   id: ID! @index
   lastClickedInBlock: Int!
-  lastReward: Int!
+  lastReward: BigInt!
   pressCount: Int!
-  totalRewards: BigInt! @index
+  totalRewards: BigInt!
 }
 
 type BackToTheFutureScore @entity {
  "Account id"
   id: ID! @index
   lastClickedInBlock: Int!
-  lastReward: Int!
+  lastReward: BigInt!
   pressCount: Int!
   totalRewards: BigInt!
 }
@@ -20,7 +20,7 @@ type ThePressiahComethScore @entity {
  "Account id"
   id: ID! @index
   lastClickedInBlock: Int!
-  lastReward: Int!
+  lastReward: BigInt!
   pressCount: Int!
   totalRewards: BigInt!
 }
