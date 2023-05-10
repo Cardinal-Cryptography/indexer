@@ -1,27 +1,33 @@
 type EarlyBirdSpecialScore @entity {
-  id: ID!
+ "Account id"
+  id: ID! @index
   lastClickedInBlock: Int!
+  lastReward: Int!
   pressCount: Int!
   totalRewards: BigInt! @index
 }
 
 type BackToTheFutureScore @entity {
-  id: ID!
+ "Account id"
+  id: ID! @index
   lastClickedInBlock: Int!
+  lastReward: Int!
   pressCount: Int!
-  totalRewards: BigInt! @index
+  totalRewards: BigInt!
 }
 
 type ThePressiahComethScore @entity {
-  id: ID!
+ "Account id"
+  id: ID! @index
   lastClickedInBlock: Int!
+  lastReward: Int!
   pressCount: Int!
-  totalRewards: BigInt! @index
+  totalRewards: BigInt!
 }
 
 type Scores @entity {
  "Account id"
-  id: ID!
+  id: ID! @index
   earlyBirdSpecialScore: EarlyBirdSpecialScore
   backToTheFutureScore: BackToTheFutureScore
   thePressiahComethScore: ThePressiahComethScore

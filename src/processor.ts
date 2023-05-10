@@ -128,12 +128,14 @@ processor.run(new TypeormDatabase(), async ctx => {
                         game_score = new EarlyBirdSpecialScore ({
                             id: accountId,
                             lastClickedInBlock: 0,
+                            lastReward: 0,
                             pressCount: 0,
                             totalRewards: 0n
                         })
                     }
 
                     game_score.lastClickedInBlock = event.when
+                    game_score.lastReward = event.amount
                     game_score.totalRewards += event.amount
                     game_score.pressCount += 1
 
@@ -148,12 +150,14 @@ processor.run(new TypeormDatabase(), async ctx => {
                         game_score = new BackToTheFutureScore ({
                             id: accountId,
                             lastClickedInBlock: 0,
+                            lastReward: 0,
                             pressCount: 0,
                             totalRewards: 0n
                         })
                     }
 
                     game_score.lastClickedInBlock = event.when
+                    game_score.lastReward = event.amount
                     game_score.totalRewards += event.amount
                     game_score.pressCount += 1
 
@@ -168,12 +172,14 @@ processor.run(new TypeormDatabase(), async ctx => {
                         game_score = new ThePressiahComethScore ({
                             id: accountId,
                             lastClickedInBlock: 0,
+                            lastReward: 0,
                             pressCount: 0,
                             totalRewards: 0n
                         })
                     }
 
                     game_score.lastClickedInBlock = event.when
+                    game_score.lastReward = event.amount
                     game_score.totalRewards += event.amount
                     game_score.pressCount += 1
 
