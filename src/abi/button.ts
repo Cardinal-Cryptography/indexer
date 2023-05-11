@@ -2,7 +2,7 @@ import {Abi, encodeCall, decodeResult} from "@subsquid/ink-abi"
 
 export const metadata = {
   "source": {
-    "hash": "0xe3968ed6e411e076fe30a5636e323cdb4aa5198231a023ca08cb711aaded11a5",
+    "hash": "0x3f79df41901dfb1eb4d622decbcdb7e9b20cbf0828fd17fd692d6f30676138ba",
     "language": "ink! 4.0.1",
     "compiler": "rustc 1.66.0-nightly",
     "build_info": {
@@ -124,7 +124,7 @@ export const metadata = {
             "label": "round",
             "type": {
               "displayName": [
-                "u64"
+                "Round"
               ],
               "type": 5
             }
@@ -154,7 +154,7 @@ export const metadata = {
             "label": "round",
             "type": {
               "displayName": [
-                "u64"
+                "Round"
               ],
               "type": 5
             }
@@ -232,19 +232,7 @@ export const metadata = {
         "label": "PressiahFound"
       },
       {
-        "args": [
-          {
-            "docs": [],
-            "indexed": false,
-            "label": "by",
-            "type": {
-              "displayName": [
-                "AccountId"
-              ],
-              "type": 1
-            }
-          }
-        ],
+        "args": [],
         "docs": [
           " Event emitted when the finished game is reset and pressiah is rewarded"
         ],
@@ -449,7 +437,7 @@ export const metadata = {
         "docs": [
           " Resets the game",
           "",
-          " Erases the storage and pays award to the Pressiah",
+          " Erases the storage and pays the award to the Pressiah",
           " Can be called by any account on behalf of a player",
           " Can only be called after button's deadline"
         ],
@@ -464,6 +452,27 @@ export const metadata = {
           "type": 28
         },
         "selector": "0xdbd37e6c"
+      },
+      {
+        "args": [],
+        "docs": [
+          " Rewards the Pressiah",
+          "",
+          " Does not reset any other state beyond the last_presser record",
+          " Can only be called after button's deadline",
+          " Can be called by any account"
+        ],
+        "label": "reward_pressiah",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 28
+        },
+        "selector": "0xa8c3a2cd"
       },
       {
         "args": [
@@ -1870,7 +1879,7 @@ export class Contract {
         return this.stateCall('0x1f48bede', [])
     }
 
-    round(): Promise<Result<u64, LangError>> {
+    round(): Promise<Result<Round, LangError>> {
         return this.stateCall('0x11d6557e', [])
     }
 
@@ -1916,13 +1925,13 @@ export type Event = Event_ButtonPressed | Event_RewardMinted | Event_PressiahFou
 export interface Event_ButtonPressed {
     __kind: 'ButtonPressed'
     by: AccountId
-    round: u64
+    round: Round
     score: Balance
 }
 
 export interface Event_RewardMinted {
     __kind: 'RewardMinted'
-    round: u64
+    round: Round
     rewardToken: AccountId
     to: AccountId
     reward: Balance
@@ -1936,7 +1945,6 @@ export interface Event_PressiahFound {
 
 export interface Event_ButtonReset {
     __kind: 'ButtonReset'
-    by: AccountId
 }
 
 export interface Event_Halted {
@@ -1947,7 +1955,7 @@ export interface Event_Resumed {
     __kind: 'Resumed'
 }
 
-export type Message = Message_deadline | Message_round | Message_is_dead | Message_last_presser | Message_access_control | Message_reward_token | Message_ticket_token | Message_marketplace | Message_code_hash | Message_press | Message_reset | Message_set_access_control | Message_set_button_lifetime | Message_set_min_reward | Message_set_max_reward | Message_terminate | Message_set_code
+export type Message = Message_deadline | Message_round | Message_is_dead | Message_last_presser | Message_access_control | Message_reward_token | Message_ticket_token | Message_marketplace | Message_code_hash | Message_press | Message_reset | Message_reward_pressiah | Message_set_access_control | Message_set_button_lifetime | Message_set_min_reward | Message_set_max_reward | Message_terminate | Message_set_code
 
 /**
  *  Returns the current deadline
@@ -2027,12 +2035,23 @@ export interface Message_press {
 /**
  *  Resets the game
  * 
- *  Erases the storage and pays award to the Pressiah
+ *  Erases the storage and pays the award to the Pressiah
  *  Can be called by any account on behalf of a player
  *  Can only be called after button's deadline
  */
 export interface Message_reset {
     __kind: 'reset'
+}
+
+/**
+ *  Rewards the Pressiah
+ * 
+ *  Does not reset any other state beyond the last_presser record
+ *  Can only be called after button's deadline
+ *  Can be called by any account
+ */
+export interface Message_reward_pressiah {
+    __kind: 'reward_pressiah'
 }
 
 /**
@@ -2115,7 +2134,7 @@ export interface LangError_CouldNotReadInput {
     __kind: 'CouldNotReadInput'
 }
 
-export type u64 = bigint
+export type Round = bigint
 
 export type AccountId = Uint8Array
 

@@ -1,22 +1,27 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_} from "typeorm"
 import * as marshal from "./marshal"
 
 @Entity_()
 export class BackToTheFutureScore {
-  constructor(props?: Partial<BackToTheFutureScore>) {
-    Object.assign(this, props)
-  }
+    constructor(props?: Partial<BackToTheFutureScore>) {
+        Object.assign(this, props)
+    }
 
-  @PrimaryColumn_()
-  id!: string
+    /**
+     * Account id
+     */
+    @PrimaryColumn_()
+    id!: string
 
-  @Column_("int4", {nullable: false})
-  lastClickedInBlock!: number
+    @Column_("int4", {nullable: false})
+    lastClickedInBlock!: number
 
-  @Column_("int4", {nullable: false})
-  pressCount!: number
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+    lastReward!: bigint
 
-  @Index_()
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  totalRewards!: bigint
+    @Column_("int4", {nullable: false})
+    pressCount!: number
+
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+    totalRewards!: bigint
 }
