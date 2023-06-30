@@ -30,7 +30,6 @@ const THE_PRESSIAH_COMETH_CONTRACT_ADDRESS = account2hex(
 var onBoot = true;
 
 const processor = new SubstrateBatchProcessor()
-  .setBatchSize(1000)
   .setDataSource({
     archive: util.format(
       '%s://%s:%s/graphql',
