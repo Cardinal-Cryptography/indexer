@@ -36,9 +36,9 @@ runs:
       with:
         repository: Cardinal-Cryptography/aleph-apps
         token: ${{ inputs.github_token }}
-        path: "aleph-apps"
+        path: 'aleph-apps'
         ref: main
-    
+
     - name: KUSTOMIZE | Init kustomize
       uses: imranismail/setup-kustomize@v1
       with:

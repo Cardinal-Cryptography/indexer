@@ -16,9 +16,7 @@
   "contract": {
     "name": "button",
     "version": "0.1.0",
-    "authors": [
-      "Cardinal Cryptography"
-    ]
+    "authors": ["Cardinal Cryptography"]
   },
   "spec": {
     "constructors": [
@@ -27,63 +25,49 @@
           {
             "label": "ticket_token",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 1
             }
           },
           {
             "label": "reward_token",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 1
             }
           },
           {
             "label": "marketplace",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 1
             }
           },
           {
             "label": "button_lifetime",
             "type": {
-              "displayName": [
-                "BlockNumber"
-              ],
+              "displayName": ["BlockNumber"],
               "type": 0
             }
           },
           {
             "label": "scoring",
             "type": {
-              "displayName": [
-                "Scoring"
-              ],
+              "displayName": ["Scoring"],
               "type": 7
             }
           },
           {
             "label": "min_reward",
             "type": {
-              "displayName": [
-                "Balance"
-              ],
+              "displayName": ["Balance"],
               "type": 4
             }
           },
           {
             "label": "max_reward",
             "type": {
-              "displayName": [
-                "Balance"
-              ],
+              "displayName": ["Balance"],
               "type": 4
             }
           }
@@ -92,10 +76,7 @@
         "label": "new",
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink_primitives",
-            "ConstructorResult"
-          ],
+          "displayName": ["ink_primitives", "ConstructorResult"],
           "type": 8
         },
         "selector": "0x9bae9d5e"
@@ -110,9 +91,7 @@
             "indexed": true,
             "label": "by",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 1
             }
           },
@@ -121,9 +100,7 @@
             "indexed": false,
             "label": "round",
             "type": {
-              "displayName": [
-                "u64"
-              ],
+              "displayName": ["u64"],
               "type": 5
             }
           },
@@ -132,16 +109,12 @@
             "indexed": false,
             "label": "score",
             "type": {
-              "displayName": [
-                "Balance"
-              ],
+              "displayName": ["Balance"],
               "type": 4
             }
           }
         ],
-        "docs": [
-          " Event emitted when TheButton is pressed"
-        ],
+        "docs": [" Event emitted when TheButton is pressed"],
         "label": "ButtonPressed"
       },
       {
@@ -151,9 +124,7 @@
             "indexed": false,
             "label": "round",
             "type": {
-              "displayName": [
-                "u64"
-              ],
+              "displayName": ["u64"],
               "type": 5
             }
           },
@@ -162,9 +133,7 @@
             "indexed": true,
             "label": "reward_token",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 1
             }
           },
@@ -173,9 +142,7 @@
             "indexed": true,
             "label": "to",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 1
             }
           },
@@ -184,9 +151,7 @@
             "indexed": false,
             "label": "reward",
             "type": {
-              "displayName": [
-                "Balance"
-              ],
+              "displayName": ["Balance"],
               "type": 4
             }
           }
@@ -205,9 +170,7 @@
             "indexed": true,
             "label": "pressiah",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 1
             }
           },
@@ -216,9 +179,7 @@
             "indexed": false,
             "label": "reward",
             "type": {
-              "displayName": [
-                "Balance"
-              ],
+              "displayName": ["Balance"],
               "type": 4
             }
           }
@@ -236,9 +197,7 @@
             "indexed": false,
             "label": "by",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 1
             }
           }
@@ -260,10 +219,7 @@
       }
     ],
     "lang_error": {
-      "displayName": [
-        "ink",
-        "LangError"
-      ],
+      "displayName": ["ink", "LangError"],
       "type": 10
     },
     "messages": [
@@ -278,44 +234,31 @@
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 11
         },
         "selector": "0x1f48bede"
       },
       {
         "args": [],
-        "docs": [
-          " Returns the curent round number"
-        ],
+        "docs": [" Returns the curent round number"],
         "label": "round",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 12
         },
         "selector": "0x11d6557e"
       },
       {
         "args": [],
-        "docs": [
-          " Returns the buttons status"
-        ],
+        "docs": [" Returns the buttons status"],
         "label": "is_dead",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 13
         },
         "selector": "0x958a890a"
@@ -330,61 +273,43 @@
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 14
         },
         "selector": "0x713e8f6c"
       },
       {
         "args": [],
-        "docs": [
-          " Returns the current access control contract address"
-        ],
+        "docs": [" Returns the current access control contract address"],
         "label": "access_control",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 16
         },
         "selector": "0xf8e6bc11"
       },
       {
         "args": [],
-        "docs": [
-          " Returns address of the game's reward token"
-        ],
+        "docs": [" Returns address of the game's reward token"],
         "label": "reward_token",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 16
         },
         "selector": "0x0b067d01"
       },
       {
         "args": [],
-        "docs": [
-          " Returns address of the game's ticket token"
-        ],
+        "docs": [" Returns address of the game's ticket token"],
         "label": "ticket_token",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 16
         },
         "selector": "0xda49c9d7"
@@ -398,27 +323,19 @@
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 16
         },
         "selector": "0x980bd6ab"
       },
       {
         "args": [],
-        "docs": [
-          " Returns own code hash"
-        ],
+        "docs": [" Returns own code hash"],
         "label": "code_hash",
         "mutates": false,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 17
         },
         "selector": "0xbd69cea7"
@@ -434,10 +351,7 @@
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 28
         },
         "selector": "0x55d7a21d"
@@ -455,10 +369,7 @@
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 28
         },
         "selector": "0xdbd37e6c"
@@ -468,9 +379,7 @@
           {
             "label": "new_access_control",
             "type": {
-              "displayName": [
-                "AccountId"
-              ],
+              "displayName": ["AccountId"],
               "type": 1
             }
           }
@@ -485,10 +394,7 @@
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 28
         },
         "selector": "0x5c864ac6"
@@ -498,9 +404,7 @@
           {
             "label": "new_button_lifetime",
             "type": {
-              "displayName": [
-                "BlockNumber"
-              ],
+              "displayName": ["BlockNumber"],
               "type": 0
             }
           }
@@ -514,10 +418,7 @@
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 28
         },
         "selector": "0xb98de9cc"
@@ -527,9 +428,7 @@
           {
             "label": "min_reward",
             "type": {
-              "displayName": [
-                "Balance"
-              ],
+              "displayName": ["Balance"],
               "type": 4
             }
           }
@@ -543,10 +442,7 @@
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 28
         },
         "selector": "0x48ad1d20"
@@ -556,9 +452,7 @@
           {
             "label": "max_reward",
             "type": {
-              "displayName": [
-                "Balance"
-              ],
+              "displayName": ["Balance"],
               "type": 4
             }
           }
@@ -572,10 +466,7 @@
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 28
         },
         "selector": "0x2a249829"
@@ -591,10 +482,7 @@
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 28
         },
         "selector": "0x476d839f"
@@ -611,24 +499,17 @@
           {
             "label": "callback",
             "type": {
-              "displayName": [
-                "Option"
-              ],
+              "displayName": ["Option"],
               "type": 30
             }
           }
         ],
-        "docs": [
-          " Upgrades contract code"
-        ],
+        "docs": [" Upgrades contract code"],
         "label": "set_code",
         "mutates": true,
         "payable": false,
         "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
+          "displayName": ["ink", "MessageResult"],
           "type": 28
         },
         "selector": "0x694fb50f"
@@ -899,11 +780,7 @@
             ]
           }
         },
-        "path": [
-          "ink_primitives",
-          "types",
-          "AccountId"
-        ]
+        "path": ["ink_primitives", "types", "AccountId"]
       }
     },
     {
@@ -970,11 +847,7 @@
             ]
           }
         },
-        "path": [
-          "button",
-          "button_game",
-          "Scoring"
-        ]
+        "path": ["button", "button_game", "Scoring"]
       }
     },
     {
@@ -1014,9 +887,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1040,10 +911,7 @@
             ]
           }
         },
-        "path": [
-          "ink_primitives",
-          "LangError"
-        ]
+        "path": ["ink_primitives", "LangError"]
       }
     },
     {
@@ -1083,9 +951,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1125,9 +991,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1167,9 +1031,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1209,9 +1071,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1242,9 +1102,7 @@
             "type": 1
           }
         ],
-        "path": [
-          "Option"
-        ]
+        "path": ["Option"]
       }
     },
     {
@@ -1284,9 +1142,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1326,9 +1182,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1368,9 +1222,7 @@
             "type": 20
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1386,11 +1238,7 @@
             ]
           }
         },
-        "path": [
-          "ink_primitives",
-          "types",
-          "Hash"
-        ]
+        "path": ["ink_primitives", "types", "Hash"]
       }
     },
     {
@@ -1478,11 +1326,7 @@
             ]
           }
         },
-        "path": [
-          "button",
-          "errors",
-          "GameError"
-        ]
+        "path": ["button", "errors", "GameError"]
       }
     },
     {
@@ -1512,11 +1356,7 @@
             ]
           }
         },
-        "path": [
-          "shared_traits",
-          "haltable",
-          "HaltableError"
-        ]
+        "path": ["shared_traits", "haltable", "HaltableError"]
       }
     },
     {
@@ -1570,11 +1410,7 @@
             ]
           }
         },
-        "path": [
-          "access_control",
-          "roles",
-          "Role"
-        ]
+        "path": ["access_control", "roles", "Role"]
       }
     },
     {
@@ -1709,11 +1545,7 @@
             ]
           }
         },
-        "path": [
-          "marketplace",
-          "marketplace",
-          "Error"
-        ]
+        "path": ["marketplace", "marketplace", "Error"]
       }
     },
     {
@@ -1753,9 +1585,7 @@
             "type": 10
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1795,9 +1625,7 @@
             "type": 20
           }
         ],
-        "path": [
-          "Result"
-        ]
+        "path": ["Result"]
       }
     },
     {
@@ -1828,9 +1656,7 @@
             "type": 24
           }
         ],
-        "path": [
-          "Option"
-        ]
+        "path": ["Option"]
       }
     }
   ],

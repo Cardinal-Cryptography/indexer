@@ -83,12 +83,12 @@ npx squid-ink-typegen --abi src/abi/erc20.json --output src/abi/erc20.ts
 
 Squid tools assume a certain project layout.
 
-* All compiled js files must reside in `lib` and all TypeScript sources in `src`.
-The layout of `lib` must reflect `src`.
-* All TypeORM classes must be exported by `src/model/index.ts` (`lib/model` module).
-* Database schema must be defined in `schema.graphql`.
-* Database migrations must reside in `db/migrations` and must be plain js files.
-* `sqd(1)` and `squid-*(1)` executables consult `.env` file for a number of environment variables.
+- All compiled js files must reside in `lib` and all TypeScript sources in `src`.
+  The layout of `lib` must reflect `src`.
+- All TypeORM classes must be exported by `src/model/index.ts` (`lib/model` module).
+- Database schema must be defined in `schema.graphql`.
+- Database migrations must reside in `db/migrations` and must be plain js files.
+- `sqd(1)` and `squid-*(1)` executables consult `.env` file for a number of environment variables.
 
 ## Graphql server extensions
 
