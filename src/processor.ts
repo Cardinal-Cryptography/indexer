@@ -18,9 +18,15 @@ import { toJSON } from '@subsquid/util-internal-json';
 import { u8aToHex } from '@polkadot/util';
 var util = require('util');
 
-const EARLY_BIRD_SPECIAL = account2hex(addresses.early_bird_special);
-const BACK_TO_THE_FUTURE = account2hex(addresses.back_to_the_future);
-const THE_PRESSIAH_COMETH = account2hex(addresses.the_pressiah_cometh);
+const EARLY_BIRD_SPECIAL_CONTRACT_ADDRESS = account2hex(
+  addresses.early_bird_special,
+);
+const BACK_TO_THE_FUTURE_CONTRACT_ADDRESS = account2hex(
+  addresses.back_to_the_future,
+);
+const THE_PRESSIAH_COMETH_CONTRACT_ADDRESS = account2hex(
+  addresses.the_pressiah_cometh,
+);
 
 var onBoot = true;
 
@@ -34,17 +40,17 @@ const processor = new SubstrateBatchProcessor()
       process.env.GATEWAY_PORT,
     ),
   })
-  .addContractsContractEmitted(EARLY_BIRD_SPECIAL, {
+  .addContractsContractEmitted(EARLY_BIRD_SPECIAL_CONTRACT_ADDRESS, {
     data: {
       event: { args: true },
     },
   } as const)
-  .addContractsContractEmitted(BACK_TO_THE_FUTURE, {
+  .addContractsContractEmitted(BACK_TO_THE_FUTURE_CONTRACT_ADDRESS, {
     data: {
       event: { args: true },
     },
   } as const)
-  .addContractsContractEmitted(THE_PRESSIAH_COMETH, {
+  .addContractsContractEmitted(THE_PRESSIAH_COMETH_CONTRACT_ADDRESS, {
     data: {
       event: { args: true },
     },
@@ -66,9 +72,11 @@ function extractPressEvents(ctx: Ctx): RewardMintedEvent[] {
     for (const item of items) {
       if (
         item.name === 'Contracts.ContractEmitted' &&
-        [EARLY_BIRD_SPECIAL, BACK_TO_THE_FUTURE, THE_PRESSIAH_COMETH].includes(
-          item.event.args.contract,
-        )
+        [
+          EARLY_BIRD_SPECIAL_CONTRACT_ADDRESS,
+          BACK_TO_THE_FUTURE_CONTRACT_ADDRESS,
+          THE_PRESSIAH_COMETH_CONTRACT_ADDRESS,
+        ].includes(item.event.args.contract)
       ) {
         const event = button.decodeEvent(item.event.args.data);
         if (event.__kind === 'RewardMinted') {
