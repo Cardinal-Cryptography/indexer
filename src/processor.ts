@@ -1,5 +1,4 @@
 import * as button from './abi/button';
-import addresses from './addresses/index';
 import {
   BatchContext,
   BatchProcessorItem,
@@ -13,19 +12,15 @@ import {
 } from './model';
 import { In } from 'typeorm';
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store';
-import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
-import { u8aToHex } from '@polkadot/util';
-var util = require('util');
+import { encodeAddress } from '@polkadot/util-crypto';
+import {
+  EARLY_BIRD_SPECIAL_CONTRACT_ADDRESS,
+  BACK_TO_THE_FUTURE_CONTRACT_ADDRESS,
+  THE_PRESSIAH_COMETH_CONTRACT_ADDRESS,
+} from './constants';
+import addresses from './addresses/index';
 
-const EARLY_BIRD_SPECIAL_CONTRACT_ADDRESS = account2hex(
-  addresses.early_bird_special,
-);
-const BACK_TO_THE_FUTURE_CONTRACT_ADDRESS = account2hex(
-  addresses.back_to_the_future,
-);
-const THE_PRESSIAH_COMETH_CONTRACT_ADDRESS = account2hex(
-  addresses.the_pressiah_cometh,
-);
+var util = require('util');
 
 var onBoot = true;
 
@@ -240,7 +235,3 @@ processor.run(new TypeormDatabase(), async (ctx) => {
     await ctx.store.save([...scoresMap.values()]);
   }
 });
-
-function account2hex(account: string): string {
-  return u8aToHex(decodeAddress(account));
-}
