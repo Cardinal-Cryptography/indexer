@@ -14,7 +14,6 @@ import {
 import { In } from 'typeorm';
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
-import { toJSON } from '@subsquid/util-internal-json';
 import { u8aToHex } from '@polkadot/util';
 var util = require('util');
 
