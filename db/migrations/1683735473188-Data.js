@@ -42,14 +42,8 @@ module.exports = class Data1683735473188 {
     await db.query(`DROP INDEX "public"."IDX_97f8b5b38b97dfa04fc03a4ed3"`);
     await db.query(`DROP INDEX "public"."IDX_ef00bbbc575f78582e8ec9c157"`);
     await db.query(`DROP INDEX "public"."IDX_81156b62dedbba1c8ad8c34cb8"`);
-    await db.query(
-      `ALTER TABLE "scores" DROP CONSTRAINT "FK_97f8b5b38b97dfa04fc03a4ed39"`,
-    );
-    await db.query(
-      `ALTER TABLE "scores" DROP CONSTRAINT "FK_ef00bbbc575f78582e8ec9c157b"`,
-    );
-    await db.query(
-      `ALTER TABLE "scores" DROP CONSTRAINT "FK_81156b62dedbba1c8ad8c34cb85"`,
-    );
+    await db.query(`ALTER TABLE "scores" DROP CONSTRAINT "FK_97f8b5b38b97dfa04fc03a4ed39"`);
+    await db.query(`ALTER TABLE "scores" DROP CONSTRAINT "FK_ef00bbbc575f78582e8ec9c157b"`);
+    await db.query(`ALTER TABLE "scores" DROP CONSTRAINT "FK_81156b62dedbba1c8ad8c34cb85"`);
   }
 };

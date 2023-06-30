@@ -194,9 +194,7 @@ export const metadata = {
       },
       {
         args: [],
-        docs: [
-          ' Event emitted when the finished game is reset and pressiah is rewarded',
-        ],
+        docs: [' Event emitted when the finished game is reset and pressiah is rewarded'],
         label: 'ButtonReset',
       },
       {
@@ -483,11 +481,7 @@ export const metadata = {
       },
       {
         args: [],
-        docs: [
-          ' Terminates the contract',
-          '',
-          ' Should only be called by the contract Admin',
-        ],
+        docs: [' Terminates the contract', '', ' Should only be called by the contract Admin'],
         label: 'terminate',
         mutates: true,
         payable: false,
@@ -1479,13 +1473,7 @@ export const metadata = {
             ],
           },
         },
-        path: [
-          'openbrush_contracts',
-          'traits',
-          'errors',
-          'psp22',
-          'PSP22Error',
-        ],
+        path: ['openbrush_contracts', 'traits', 'errors', 'psp22', 'PSP22Error'],
       },
     },
     {
@@ -1698,11 +1686,7 @@ export interface ChainContext {
 }
 
 export class Contract {
-  constructor(
-    private ctx: ChainContext,
-    private address: string,
-    private blockHash?: string,
-  ) {}
+  constructor(private ctx: ChainContext, private address: string, private blockHash?: string) {}
 
   deadline(): Promise<Result<BlockNumber, LangError>> {
     return this.stateCall('0x1f48bede', []);
@@ -2177,6 +2161,4 @@ export interface Error_MarketplaceEmpty {
   __kind: 'MarketplaceEmpty';
 }
 
-export type Result<T, E> =
-  | { __kind: 'Ok'; value: T }
-  | { __kind: 'Err'; value: E };
+export type Result<T, E> = { __kind: 'Ok'; value: T } | { __kind: 'Err'; value: E };

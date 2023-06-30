@@ -202,9 +202,7 @@
             }
           }
         ],
-        "docs": [
-          " Event emitted when the finished game is reset and pressiah is rewarded"
-        ],
+        "docs": [" Event emitted when the finished game is reset and pressiah is rewarded"],
         "label": "ButtonReset"
       },
       {
@@ -473,11 +471,7 @@
       },
       {
         "args": [],
-        "docs": [
-          " Terminates the contract",
-          "",
-          " Should only be called by the contract Admin"
-        ],
+        "docs": [" Terminates the contract", "", " Should only be called by the contract Admin"],
         "label": "terminate",
         "mutates": true,
         "payable": false,
@@ -1469,13 +1463,7 @@
             ]
           }
         },
-        "path": [
-          "openbrush_contracts",
-          "traits",
-          "errors",
-          "psp22",
-          "PSP22Error"
-        ]
+        "path": ["openbrush_contracts", "traits", "errors", "psp22", "PSP22Error"]
       }
     },
     {

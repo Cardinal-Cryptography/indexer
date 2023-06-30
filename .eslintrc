@@ -25,13 +25,7 @@
     "id-length": [
       "error",
       {
-        "exceptions": [
-          "_",
-          /* placeholder */ "a",
-          /* sort */ "b",
-          /* sort */ "i" /* loop */,
-          "e"
-        ]
+        "exceptions": ["_", /* placeholder */ "a", /* sort */ "b", /* sort */ "i" /* loop */, "e"]
       }
     ],
     // Setting fields directly seems fine for entities, makes the implementation simple
