@@ -17,6 +17,7 @@ import {
   EARLY_BIRD_SPECIAL_CONTRACT_ADDRESS,
   BACK_TO_THE_FUTURE_CONTRACT_ADDRESS,
   THE_PRESSIAH_COMETH_CONTRACT_ADDRESS,
+  CONTRACT_ADDRESSES,
 } from './constants';
 import addresses from './addresses/index';
 
@@ -65,11 +66,7 @@ function extractPressEvents(ctx: Ctx): RewardMintedEvent[] {
     for (const item of items) {
       if (
         item.name === 'Contracts.ContractEmitted' &&
-        [
-          EARLY_BIRD_SPECIAL_CONTRACT_ADDRESS,
-          BACK_TO_THE_FUTURE_CONTRACT_ADDRESS,
-          THE_PRESSIAH_COMETH_CONTRACT_ADDRESS,
-        ].includes(item.event.args.contract)
+        CONTRACT_ADDRESSES.includes(item.event.args.contract)
       ) {
         const event = button.decodeEvent(item.event.args.data);
         if (event.__kind === 'RewardMinted') {
