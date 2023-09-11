@@ -40,9 +40,9 @@ runs:
         ref: main
     
     - name: KUSTOMIZE | Init kustomize
-      uses: imranismail/setup-kustomize@v1
+      uses: imranismail/setup-kustomize@v2
       with:
-        kustomize-version: '3.8.6'
+        kustomize-version: ${{ vars.KUSTOMIZE_VERSION }}
 
     - name: KUSTOMIZE | Update docker image tag for squid
       shell: bash
