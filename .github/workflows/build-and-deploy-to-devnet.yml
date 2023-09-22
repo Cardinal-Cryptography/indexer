@@ -66,6 +66,7 @@ jobs:
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}
+          kustomize_version: ${{ vars.KUSTOMIZE_VERSION }}
   
   deploy_api:
     name: Deploy API
@@ -83,3 +84,4 @@ jobs:
           aws_devnet_access_key_id: ${{ secrets.AWS_DEVNET_ACCESS_KEY_ID }}
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}
+          kustomize_version: ${{ vars.KUSTOMIZE_VERSION }}
