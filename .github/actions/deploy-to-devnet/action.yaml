@@ -35,7 +35,7 @@ runs:
         echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
     - name: GIT | Checkout aleph-apps repo
-      uses: actions/checkout@master
+      uses: actions/checkout@v4
       with:
         repository: Cardinal-Cryptography/aleph-apps
         token: ${{ inputs.github_token }}
