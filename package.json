@@ -23,7 +23,7 @@
     "@subsquid/typeorm-store": "0.2.2",
     "dotenv": "^16.0.0",
     "pg": "8.9.0",
-    "typeorm": "0.3.11"
+    "typeorm": "0.3.20"
   },
   "devDependencies": {
     "@subsquid/ink-typegen": "^0.2.1",
