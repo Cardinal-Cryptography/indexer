@@ -7,6 +7,15 @@ inputs:
   image_tag:
     description: Tag of the docker image to be deployed
     required: true
+  autocommit-gpg-key-b64:
+    description: base64 encoded signing key
+    required: true
+  autocommit-gpg-key-fingerprint:
+    description: fingerprint of gpg key
+    required: true
+  autocommit-author:
+    description: Commit author
+    required: true
   aws_devnet_access_key_id:
     required: true
   aws_devnet_secret_access_key:
@@ -55,13 +64,22 @@ runs:
         cd aleph-apps/indexer/squid/overlays/devnet/eu-central-1
         kustomize edit set image "${{ inputs.registry }}-image-placeholder=${{ env.DEPLOY_IMAGE }}"
 
+    - name: Configure signing key
+      shell: bash
+      run: |
+        echo ${{ inputs.autocommit-gpg-key-b64 }} | base64 -d > key.gpg
+        gpg --import key.gpg
+        rm key.gpg
+        git config --global user.signingkey $(echo ${{ inputs.autocommit-gpg-key-fingerprint }} | tail -c 17)
+
     - name: GIT | Commit changes to aleph-apps repository
       uses: EndBug/add-and-commit@v5.1.0
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
       with:
-        author_name: AlephZero Automation
-        author_email: alephzero@10clouds.com
+        author_name: ${{ inputs.autocommit-author }}
+        author_email: ${{ inputs.autocommit-email }}
+        commit: -S
         message: 'Updating Indexer ${{ inputs.registry }} docker image tag: ${{ inputs.image_tag }}'
         add: '*.yaml'
         cwd: 'aleph-apps'
