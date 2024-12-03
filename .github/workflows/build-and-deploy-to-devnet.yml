@@ -67,6 +67,10 @@ jobs:
           aws_devnet_secret_access_key: ${{ secrets.AWS_DEVNET_SECRET_ACCESS_KEY }}
           github_token: ${{ secrets.CI_GH_TOKEN }}
           kustomize_version: ${{ vars.KUSTOMIZE_VERSION }}
+          autocommit-author: ${{ secrets.AUTOCOMMIT_AUTHOR }}
+          autocommit-email: ${{ secrets.AUTOCOMMIT_EMAIL }}
+          autocommit-gpg-key-b64: ${{ secrets.AUTOCOMMIT_GPG_KEY_B64 }}
+          autocommit-gpg-key-fingerprint: ${{ secrets.AUTOCOMMIT_GPG_KEY_FINGERPRINT }}
   
   deploy_api:
     name: Deploy API
